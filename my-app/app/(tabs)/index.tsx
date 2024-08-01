@@ -1,22 +1,30 @@
+import PasswordBox from "@/components/PasswordBox/PasswordBox";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
 
 export default function HomeScreen() {
     return (
         <View style={styles.container}>
-            <View style={styles.header}></View>
+            <View style={styles.header}>
+                {/* Adiciona a logo no cabeçalho */}
+                <Image
+                    source={require('@/assets/images/logo.png')}
+                    style={styles.logo}
+                />
+            </View>
             <View style={styles.box}>
                 <View style={styles.stepContainer}>
                     <Text style={styles.subtitle}>Step 1: Try it</Text>
-                    <Text> 
-                      Edit{" "}
+                    <Text>
+                        Edit{" "}
                         <Text style={styles.defaultSemiBold}>
                             app/(tabs)/index.tsx </Text>{" "}
                         to see changes. Press{" "}
                         <Text style={styles.defaultSemiBold}>
                             {Platform.select({
                                 ios: "cmd + d",
-                                android: "cmd + m",})} </Text> {" "}
+                                android: "cmd + m",
+                            })} </Text> {" "}
                         to open developer tools.
                     </Text>
                 </View>
@@ -28,20 +36,7 @@ export default function HomeScreen() {
                     </Text>
                 </View>
                 <View style={styles.stepContainer}>
-                    <Text style={styles.subtitle}>
-                        Step 3: Get a fresh start
-                    </Text>
-                    <Text>
-                        When you're ready, run{" "}
-                        <Text style={styles.defaultSemiBold}>
-                            npm run reset-project
-                        </Text>{" "}
-                        to get a fresh{" "}
-                        <Text style={styles.defaultSemiBold}>app</Text>{" "}
-                        directory. This will move the current{" "}
-                        <Text style={styles.defaultSemiBold}>app</Text> to{" "}
-                        <Text style={styles.defaultSemiBold}>app-example</Text>.
-                    </Text>
+                    <PasswordBox />
                 </View>
             </View>
             <Text style={styles.linktext}>Já tem uma conta? <Link style={styles.link} href={""}>Login</Link></Text>
@@ -62,6 +57,14 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: "orange",
         height: 75,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    logo: {
+        marginTop: 200,
+        width: 400,
+        height: 500,
+        resizeMode: "contain",
     },
     box: {
         alignItems: "center",
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
         gap: 8,
         marginBottom: 8,
         width: 315,
-    }, //ABAIXO, TEXTOS
+    },
     default: {
         fontSize: 16,
         lineHeight: 24,
@@ -91,9 +94,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     linktext: {
-      marginTop: 20,
-      textAlign: "center",
-  },
+        marginTop: 20,
+        textAlign: "center",
+    },
     link: {
         fontSize: 16,
         color: "orange",
