@@ -1,3 +1,5 @@
+
+import InputEmail from "@/components/InputEmail/InputEmail";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
 
@@ -26,6 +28,7 @@ export default function HomeScreen() {
                         Tap the Explore tab to learn more about what's included
                         in this starter app.
                     </Text>
+                 
                 </View>
                 <View style={styles.stepContainer}>
                     <Text style={styles.subtitle}>
