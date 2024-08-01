@@ -1,4 +1,6 @@
+
 import PasswordBox from "@/components/PasswordBox/PasswordBox";
+import InputEmail from "@/components/InputEmail/InputEmail";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
 
@@ -14,26 +16,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.box}>
                 <View style={styles.stepContainer}>
-                    <Text style={styles.subtitle}>Step 1: Try it</Text>
-                    <Text>
-                        Edit{" "}
-                        <Text style={styles.defaultSemiBold}>
-                            app/(tabs)/index.tsx </Text>{" "}
-                        to see changes. Press{" "}
-                        <Text style={styles.defaultSemiBold}>
-                            {Platform.select({
-                                ios: "cmd + d",
-                                android: "cmd + m",
-                            })} </Text> {" "}
-                        to open developer tools.
-                    </Text>
-                </View>
-                <View style={styles.stepContainer}>
-                    <Text style={styles.subtitle}>Step 2: Explore</Text>
-                    <Text>
-                        Tap the Explore tab to learn more about what's included
-                        in this starter app.
-                    </Text>
+                    <InputEmail />
                 </View>
                 <View style={styles.stepContainer}>
                     <PasswordBox />
