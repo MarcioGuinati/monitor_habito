@@ -3,6 +3,7 @@ import PasswordBox from "@/components/PasswordBox/PasswordBox";
 import InputEmail from "@/components/InputEmail/InputEmail";
 import { Link } from "expo-router";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
+import ButtonRegister from "@/components/ButtonRegister/ButtonRegister";
 
 export default function HomeScreen() {
     return (
@@ -21,9 +22,13 @@ export default function HomeScreen() {
                 <View style={styles.stepContainer}>
                     <PasswordBox />
                 </View>
+                <View style={styles.stepContainer}>
+                    <ButtonRegister />
+                </View>
             </View>
             <Text style={styles.linktext}>Já tem uma conta? <Link style={styles.link} href={""}>Login</Link></Text>
         </View>
+        
     );
 }
 
