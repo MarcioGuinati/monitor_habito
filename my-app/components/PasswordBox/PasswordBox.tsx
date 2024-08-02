@@ -40,18 +40,19 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         borderColor: "#ccc",
-        borderRadius: 5,
+        borderRadius: 10,
         paddingHorizontal: 10,
         width: '90%',
         margin: 10,
         position: "relative",
+        borderBottomWidth: 2,
     },
     input: {
         flex: 1,
         height: 40,
         paddingRight: 40,
-        paddingHorizontal: 40,
-        fontSize: 18,
+        paddingHorizontal: 50,
+        fontSize: 16,
     },
     lockIcon: {
         
