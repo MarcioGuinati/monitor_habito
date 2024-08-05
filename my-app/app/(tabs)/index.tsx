@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
     },
     box: {
+        marginTop: 100,
         alignItems: "center",
         backgroundColor: "white",
     },
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     linktext: {
-        marginTop: 20,
+        marginTop: 60,
         textAlign: "center",
     },
     link: {

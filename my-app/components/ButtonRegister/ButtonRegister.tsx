@@ -15,6 +15,7 @@ const ButtonRegister: React.FC<ButtonProps> = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
+    marginTop: 30,
     backgroundColor: 'orange',
     paddingVertical: 10,
     paddingHorizontal: 20,
