@@ -8,10 +8,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#097ca9',
-        tabBarInactiveTintColor: "gray",
-        tabBarActiveBackgroundColor: "white",
-        tabBarInactiveBackgroundColor: "white",
+        tabBarStyle: { height: 57 },
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "white",
+        tabBarActiveBackgroundColor: "orange",
+        tabBarInactiveBackgroundColor: "orange",
+        tabBarLabelStyle: { marginBottom: 5, marginTop: -5 },
         headerShown: false,
       }}>
       <Tabs.Screen
@@ -19,16 +21,25 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon name={"home-sharp"} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
+          title: 'Relatório',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={"bar-chart-sharp"} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="configurations"
+        options={{
+          title: 'Configuração',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={"cog"} color={color} />
           ),
         }}
       />
