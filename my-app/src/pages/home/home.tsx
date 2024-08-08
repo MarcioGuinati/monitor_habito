@@ -22,7 +22,7 @@ export default function HomeScreen() {
                 <View style={styles.stepContainer}>
                     <PasswordBox />
                 </View>
-                <View style={styles.stepContainer}>
+                <View style={styles.stepButtonContainer}>
                     <ButtonRegister />
                 </View>
             </View>
@@ -49,18 +49,24 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     logo: {
-        marginTop: 200,
+        marginTop: 300,
         width: 400,
         height: 500,
         resizeMode: "contain",
     },
     box: {
-        marginTop: 100,
+        marginTop: 125,
         alignItems: "center",
         backgroundColor: "white",
     },
     stepContainer: {
         gap: 8,
+        marginBottom: 8,
+        width: 315,
+    },
+    stepButtonContainer: {
+        gap: 8,
+        marginTop: 45,
         marginBottom: 8,
         width: 315,
     },
@@ -83,7 +89,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     linktext: {
-        marginTop: 60,
+        marginTop: 35,
         textAlign: "center",
     },
     link: {
