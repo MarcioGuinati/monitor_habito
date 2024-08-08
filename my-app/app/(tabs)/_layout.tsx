@@ -1,12 +1,15 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import HomeScreen from '@/src/pages/home/home';
+import TabTwoScreen from '@/src/pages/report/report';
+import ConfigScreen from '@/src/pages/configurations/configurations';
+
+const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
-
   return (
-    <Tabs
+    <Tabs.Navigator
       screenOptions={{
         tabBarStyle: { height: 57 },
         tabBarActiveTintColor: "white",
@@ -17,7 +20,8 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Tabs.Screen
-        name="index"
+        name="home"
+        component={HomeScreen}
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
@@ -26,7 +30,8 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="report"
+        component={TabTwoScreen}
         options={{
           title: 'Relatório',
           tabBarIcon: ({ color, focused }) => (
@@ -36,6 +41,7 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="configurations"
+        component={ConfigScreen}
         options={{
           title: 'Configuração',
           tabBarIcon: ({ color, focused }) => (
@@ -43,6 +49,6 @@ export default function TabLayout() {
           ),
         }}
       />
-    </Tabs>
+    </Tabs.Navigator>
   );
 }
