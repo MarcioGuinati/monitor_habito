@@ -45,14 +45,16 @@ const styles = StyleSheet.create({
         width: '90%',
         margin: 10,
         position: "relative",
-        borderBottomWidth: 2,
+        
     },
     input: {
         flex: 1,
         height: 40,
         paddingRight: 40,
-        paddingHorizontal: 50,
-        fontSize: 16,
+        paddingHorizontal: 40,
+        fontSize: 18,
+        borderBottomWidth: 1,
+        borderColor: '#CCC'
     },
     lockIcon: {
         
