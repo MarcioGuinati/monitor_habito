@@ -1,32 +1,9 @@
-
-import PasswordBox from "@/components/PasswordBox/PasswordBox";
-import InputEmail from "@/components/InputEmail/InputEmail";
-import { Link } from "expo-router";
-import { Image, StyleSheet, Platform, View, Text } from "react-native";
-import ButtonRegister from "@/components/ButtonRegister/ButtonRegister";
+import { Image, StyleSheet, View, Text } from "react-native";
 
 export default function HomeScreen() {
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                {/* Adiciona a logo no cabeçalho */}
-                <Image
-                    source={require('@/assets/images/logo.png')}
-                    style={styles.logo}
-                />
-            </View>
-            <View style={styles.box}>
-                <View style={styles.stepContainer}>
-                    <InputEmail />
-                </View>
-                <View style={styles.stepContainer}>
-                    <PasswordBox />
-                </View>
-                <View style={styles.stepButtonContainer}>
-                    <ButtonRegister />
-                </View>
-            </View>
-            <Text style={styles.linktext}>Já tem uma conta? <Link style={styles.link} href={""}>Login</Link></Text>
+            <View style={styles.header}></View>
         </View>
         
     );
@@ -47,54 +24,5 @@ const styles = StyleSheet.create({
         height: 75,
         justifyContent: "center",
         alignItems: "center",
-    },
-    logo: {
-        marginTop: 300,
-        width: 400,
-        height: 500,
-        resizeMode: "contain",
-    },
-    box: {
-        marginTop: 125,
-        alignItems: "center",
-        backgroundColor: "white",
-    },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
-        width: 315,
-    },
-    stepButtonContainer: {
-        gap: 8,
-        marginTop: 45,
-        marginBottom: 8,
-        width: 315,
-    },
-    default: {
-        fontSize: 16,
-        lineHeight: 24,
-    },
-    defaultSemiBold: {
-        fontSize: 16,
-        lineHeight: 24,
-        fontWeight: "600",
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: "bold",
-        lineHeight: 32,
-    },
-    subtitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    linktext: {
-        marginTop: 35,
-        textAlign: "center",
-    },
-    link: {
-        fontSize: 16,
-        color: "orange",
-        fontWeight: "bold",
     },
 });
