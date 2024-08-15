@@ -5,7 +5,7 @@ import { Link } from "expo-router";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
 import ButtonRegister from "@/components/ButtonRegister/ButtonRegister";
 
-export default function HomeScreen() {
+export default function Register() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
