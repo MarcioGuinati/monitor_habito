@@ -13,7 +13,6 @@ const Tabs = createBottomTabNavigator();
 export default function TabLayout() {
   return (
     <Tabs.Navigator
-    initialRouteName="login"
       screenOptions={{
         tabBarStyle: { height: 57 },
         tabBarActiveTintColor: "white",
