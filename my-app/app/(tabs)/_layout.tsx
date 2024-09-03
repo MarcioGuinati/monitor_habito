@@ -4,12 +4,16 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import HomeScreen from '@/src/pages/home/home';
 import TabTwoScreen from '@/src/pages/report/report';
 import ConfigScreen from '@/src/pages/configurations/configurations';
+import LoginScreen from '@/src/pages/login/login';
+import Register from '@/src/pages/register/register';
+import RecoverPassword from '@/src/pages/recoverPassword/recoverPassword';
 
 const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
   return (
     <Tabs.Navigator
+    initialRouteName="login"
       screenOptions={{
         tabBarStyle: { height: 57 },
         tabBarActiveTintColor: "white",
@@ -19,6 +23,20 @@ export default function TabLayout() {
         tabBarLabelStyle: { marginBottom: 5, marginTop: -5 },
         headerShown: false,
       }}>
+
+      <Tabs.Screen 
+        name="login" 
+        component={LoginScreen}
+        options={{tabBarButton: () => null}} />
+      <Tabs.Screen 
+        name="register" 
+        component={Register}
+        options={{tabBarButton: () => null}} />
+      <Tabs.Screen 
+        name="recover" 
+        component={RecoverPassword}
+        options={{tabBarButton: () => null}} />
+
       <Tabs.Screen
         name="home"
         component={HomeScreen}
