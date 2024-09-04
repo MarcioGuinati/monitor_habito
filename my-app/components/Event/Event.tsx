@@ -28,6 +28,12 @@ export default function Event() {
         fetchEventos();
     }, []);
 
+    const handleExcluirEvento = (index: number) => {
+        const updatedEventos = [...eventos];
+        updatedEventos.splice(index, 1);
+        setEventos(updatedEventos);
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
             {eventos.map((evento, index) => (
@@ -56,7 +62,7 @@ export default function Event() {
                         containerStyle={styles.checkbox}
                     />
 
-                    <Pressable style={styles.backgroundIcones}>
+                    <Pressable style={styles.backgroundIcones} onPress={() => handleExcluirEvento(index)}>
                         <Trash
                             name={"trash"}
                             size={25}
