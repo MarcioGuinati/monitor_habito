@@ -4,7 +4,7 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 interface Evento {
     id: string;
@@ -28,10 +28,19 @@ export default function Event() {
         fetchEventos();
     }, []);
 
-    const handleExcluirEvento = (index: number) => {
+    const handleExcluirEvento = async (index: number) => {
         const updatedEventos = [...eventos];
+        const eventIdToDelete = updatedEventos[index].id;
+
         updatedEventos.splice(index, 1);
         setEventos(updatedEventos);
+
+        try {
+            await deleteDoc(doc(db, "eventos", eventIdToDelete));
+            console.log(`Evento com ID ${eventIdToDelete} excluído do Firestore.`);
+        } catch (error) {
+            console.error("Erro ao excluir o evento do Firestore:", error);
+        }
     };
 
     return (
