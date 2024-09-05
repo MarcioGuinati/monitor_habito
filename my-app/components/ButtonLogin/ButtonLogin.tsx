@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
 
 interface ButtonProps {
@@ -6,8 +7,14 @@ interface ButtonProps {
 }
 
 const ButtonLogin: React.FC<ButtonProps> = ({ onPress }) => {
+  const navigation = useNavigation();
+
+    const handleHomePress = () => {
+        navigation.navigate("home");
+    };
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={handleHomePress}>
       <Text style={styles.text}>Entrar</Text>
     </TouchableOpacity>
   );

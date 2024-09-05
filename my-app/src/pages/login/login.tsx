@@ -1,11 +1,20 @@
-
+import {Image, StyleSheet, Platform, View, Text, Pressable,} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import PasswordBox from "@/components/PasswordBox/PasswordBox";
 import InputEmail from "@/components/InputEmail/InputEmail";
-import { Link } from "expo-router";
-import { Image, StyleSheet, Platform, View, Text } from "react-native";
 import ButtonLogin from "@/components/ButtonLogin/ButtonLogin";
 
 export default function LoginScreen() {
+    const navigation = useNavigation();
+
+    const handleRegisterPress = () => {
+        navigation.navigate("register");
+    };
+
+    const handleRecoverPasswordPress = () => {
+        navigation.navigate("recover");
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -15,6 +24,7 @@ export default function LoginScreen() {
                     style={styles.logo}
                 />
             </View>
+
             <View style={styles.box}>
                 <View style={styles.stepContainerEmail}>
                     <InputEmail />
@@ -22,15 +32,21 @@ export default function LoginScreen() {
                 <View style={styles.stepContainerPassword}>
                     <PasswordBox />
                 </View>
-                <Link style={styles.linkForgot} href={""}>Esqueceu sua senha?</Link>
+                <Text style={styles.linkForgot} onPress={handleRecoverPasswordPress} >Esqueceu sua senha?</Text>
                 <View style={styles.stepButtonContainer}>
                     <ButtonLogin />
                 </View>
             </View>
-            <Text style={styles.linktext1}>Não possui uma conta? <Link style={styles.link} href={""}>Cadastre-se</Link></Text>
-            <Text style={styles.linktext2}>Esqueceu sua senha? <Link style={styles.link} href={""}>Recuperar</Link></Text>
+
+            <Text style={styles.linktext1}>Não possui uma conta?{" "}
+                <Text style={styles.link} onPress={handleRegisterPress}>Cadastre-se</Text>
+            </Text>
+
+            <Text style={styles.linktext2}>Esqueceu sua senha?{" "}
+                <Text style={styles.link} onPress={handleRecoverPasswordPress}>Recuperar</Text>
+            </Text>
+
         </View>
-        
     );
 }
 

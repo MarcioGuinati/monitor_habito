@@ -1,11 +1,17 @@
-
+import { Image, StyleSheet, Platform, View, Text } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import PasswordBox from "@/components/PasswordBox/PasswordBox";
 import InputEmail from "@/components/InputEmail/InputEmail";
-import { Link } from "expo-router";
-import { Image, StyleSheet, Platform, View, Text } from "react-native";
 import ButtonRegister from "@/components/ButtonRegister/ButtonRegister";
 
+
 export default function Register() {
+    const navigation = useNavigation(); // Inicialize o hook de navegação
+
+    const handleLoginPress = () => {
+      navigation.navigate('login'); // Navegue para a tela "Register"
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -26,7 +32,7 @@ export default function Register() {
                     <ButtonRegister />
                 </View>
             </View>
-            <Text style={styles.linktext}>Já tem uma conta? <Link style={styles.link} href={""}>Login</Link></Text>
+            <Text style={styles.linktext}>Já tem uma conta? <Text style={styles.link} onPress={handleLoginPress}>Login</Text></Text>
         </View>
         
     );
