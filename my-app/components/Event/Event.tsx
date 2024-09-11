@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, Modal, TouchableOpacity } from "react-native";
 import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
@@ -14,6 +14,8 @@ interface Evento {
 
 export default function Event() {
     const [eventos, setEventos] = useState<Evento[]>([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -66,12 +68,11 @@ export default function Event() {
                         onPress={() => {
                             const updatedEventos = [...eventos];
                             updatedEventos[index].checked = !updatedEventos[index].checked;
-                            setEventos(updatedEventos);
-                        }}
-                        containerStyle={styles.checkbox}
-                    />
+                            setEventos(updatedEventos);}}
+                        containerStyle={styles.checkbox}/>
 
-                    <Pressable style={styles.backgroundIcones} onPress={() => handleExcluirEvento(index)}>
+                    <Pressable style={styles.backgroundIcones} 
+                    onPress={() => {setEventToDeleteIndex(index);setShowDeleteModal(true);}}>
                         <Trash
                             name={"trash"}
                             size={25}
@@ -80,6 +81,28 @@ export default function Event() {
                     </Pressable>
                 </View>
             ))}
+
+            <Modal visible={showDeleteModal} transparent animationType="slide">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalText}>Deseja realmente excluir?</Text>
+                        <View style={styles.modalButtons}>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowDeleteModal(false);
+                                    if (eventToDeleteIndex !== null) {
+                                        handleExcluirEvento(eventToDeleteIndex);}}}>
+                                <Text style={styles.confirmButton}>Sim</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => setShowDeleteModal(false)}>
+                                <Text style={styles.cancelButton}>Não</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 }
@@ -124,5 +147,44 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderWidth: 0,
         padding: 0,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 10,
+        alignItems: "center",
+    },
+    modalText: {
+        fontSize: 16,
+        marginBottom: 20,
+    },
+    modalButtons: {
+        flexDirection: "row",
+    },
+    confirmButton: {
+        marginRight: 5,
+        backgroundColor: 'orange',
+        color: 'white',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    cancelButton: {
+        marginLeft: 5,
+        backgroundColor: 'orange',
+        color: 'white',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
