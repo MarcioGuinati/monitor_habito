@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, Modal, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, Modal, TouchableOpacity} from "react-native";
 import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, doc} from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
+import ButtonCreate from "../ButtonCreate/ButtonCreate";
 
 interface Evento {
     id: string;
@@ -20,10 +22,12 @@ export default function Event() {
     useEffect(() => {
         const fetchEventos = async () => {
             const querySnapshot = await getDocs(collection(db, "eventos"));
-            const eventosList: Evento[] = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            } as Evento));
+            const eventosList: Evento[] = querySnapshot.docs.map(
+                (doc) =>
+                    ({
+                        id: doc.id,
+                        ...doc.data(),
+                    } as Evento));
             setEventos(eventosList);
         };
 
@@ -45,6 +49,24 @@ export default function Event() {
         }
     };
 
+    const navigation = useNavigation();
+
+    const handleEventEditPress = (eventId: string) => {
+        navigation.navigate("eventEdit", { eventId });};
+
+    const handleNovoEventoPress = async () => {
+        try {
+            const novoEventoData = {
+                nome: "Novo Evento",
+                notas: "",};
+            const docRef = await addDoc(
+                collection(db, "eventos"),
+                novoEventoData);
+            const novoEventoId = docRef.id;
+            navigation.navigate("eventEdit", { eventId: novoEventoId });
+            } catch (error) {
+            console.error("Erro ao criar novo evento:", error);}};
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
             {eventos.map((evento, index) => (
@@ -55,7 +77,9 @@ export default function Event() {
 
                     <Text style={styles.textoEvento}>{evento.nome}</Text>
 
-                    <Pressable style={styles.backgroundIcones}>
+                    <Pressable
+                        style={styles.backgroundIcones}
+                        onPress={() => handleEventEditPress(evento.id)}>
                         <Edit
                             name={"pencil-square-o"}
                             size={25}
@@ -67,17 +91,18 @@ export default function Event() {
                         checked={evento.checked || false}
                         onPress={() => {
                             const updatedEventos = [...eventos];
-                            updatedEventos[index].checked = !updatedEventos[index].checked;
-                            setEventos(updatedEventos);}}
+                            updatedEventos[index].checked =
+                                !updatedEventos[index].checked;
+                            setEventos(updatedEventos);
+                        }}
                         containerStyle={styles.checkbox}/>
 
-                    <Pressable style={styles.backgroundIcones} 
-                    onPress={() => {setEventToDeleteIndex(index);setShowDeleteModal(true);}}>
-                        <Trash
-                            name={"trash"}
-                            size={25}
-                            color="black"
-                        />
+                    <Pressable
+                        style={styles.backgroundIcones}
+                        onPress={() => {
+                            setEventToDeleteIndex(index);
+                            setShowDeleteModal(true);}}>
+                        <Trash name={"trash"} size={25} color="black" />
                     </Pressable>
                 </View>
             ))}
@@ -85,9 +110,10 @@ export default function Event() {
             <Modal visible={showDeleteModal} transparent animationType="slide">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>Deseja realmente excluir?</Text>
+                        <Text style={styles.modalText}>
+                            Deseja realmente excluir?
+                        </Text>
                         <View style={styles.modalButtons}>
-
                             <TouchableOpacity
                                 onPress={() => {
                                     setShowDeleteModal(false);
@@ -103,6 +129,8 @@ export default function Event() {
                     </View>
                 </View>
             </Modal>
+
+            <ButtonCreate onPress={handleNovoEventoPress} />
         </ScrollView>
     );
 }
@@ -169,22 +197,22 @@ const styles = StyleSheet.create({
     },
     confirmButton: {
         marginRight: 5,
-        backgroundColor: 'orange',
-        color: 'white',
+        backgroundColor: "orange",
+        color: "white",
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     cancelButton: {
         marginLeft: 5,
-        backgroundColor: 'orange',
-        color: 'white',
+        backgroundColor: "orange",
+        color: "white",
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
 });

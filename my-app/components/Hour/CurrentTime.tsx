@@ -25,9 +25,9 @@ const CurrentTime = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#cdcdcd', // Cor cinza
+    backgroundColor: '#CCCDCF', // Cor cinza
     padding: 10,
-    margin: 10,
+    borderRadius: 4,
   },
   timeText: {
     fontSize: 20,

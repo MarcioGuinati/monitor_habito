@@ -14,8 +14,10 @@ const CurrentDate = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#cdcdcd', // Cor cinza
+    backgroundColor: '#CCCDCF', // Cor cinza
     padding: 10,
+    borderRadius: 4,
+    marginRight: 10,
   },
   dateText: {
     fontSize: 20,
