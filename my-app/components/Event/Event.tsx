@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, Modal, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, Pressable, Modal, TouchableOpacity} from "react-native";
 import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, getDocs, addDoc, deleteDoc, doc} from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import ButtonCreate from "../ButtonCreate/ButtonCreate";
 
 interface Evento {
     id: string;
@@ -54,21 +53,8 @@ export default function Event() {
     const handleEventEditPress = (eventId: string) => {
         navigation.navigate("eventEdit", { eventId });};
 
-    const handleNovoEventoPress = async () => {
-        try {
-            const novoEventoData = {
-                nome: "Novo Evento",
-                notas: "",};
-            const docRef = await addDoc(
-                collection(db, "eventos"),
-                novoEventoData);
-            const novoEventoId = docRef.id;
-            navigation.navigate("eventEdit", { eventId: novoEventoId });
-            } catch (error) {
-            console.error("Erro ao criar novo evento:", error);}};
-
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.scrollViewContent}>
             {eventos.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>
@@ -130,8 +116,7 @@ export default function Event() {
                 </View>
             </Modal>
 
-            <ButtonCreate onPress={handleNovoEventoPress} />
-        </ScrollView>
+        </View>
     );
 }
 

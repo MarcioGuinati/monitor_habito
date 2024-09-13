@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -18,6 +18,8 @@ export default function EventEdit() {
     const route = useRoute();
     const { eventId } = route.params;
 
+    const titleInputRef = useRef<TextInput>(null);
+
     useEffect(() => {
         const fetchEvento = async () => {
             try {
@@ -36,13 +38,20 @@ export default function EventEdit() {
         fetchEvento();
     }, [eventId]);
 
+    useEffect(() => {
+        if (editingTitle && titleInputRef.current) {
+            titleInputRef.current.focus();
+            titleInputRef.current.setSelection(0, eventTitle.length);
+        }
+    }, [editingTitle]);
+
     const handleButtonBackPress = () => {
         navigation.navigate("home");};
 
     const handleEditTitle = () => {
         setEditingTitle(true);};
 
-    const handleTitleChange = (newTitle) => {
+    const handleTitleChange = (newTitle: string) => {
         setEventTitle(newTitle);};
 
     const handleSaveTitle = async () => {
@@ -76,6 +85,7 @@ export default function EventEdit() {
                 <View style={styles.titleBox}>
                     {editingTitle ? (
                         <TextInput
+                            ref={titleInputRef}
                             style={styles.editableTitle}
                             value={eventTitle}
                             onChangeText={handleTitleChange}
@@ -125,8 +135,8 @@ const styles = StyleSheet.create({
     },
     eventEditBox: {
         width: "85%",
-        height: "75%",
-        marginTop: 60,
+        height: "70%",
+        marginTop: 90,
         backgroundColor: "#D9D8D8",
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -173,8 +183,10 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     saveBackButtonsBox: {
+        backgroundColor: "white",
         flexDirection: "row",
         width: "85%",
         justifyContent: "space-between",
+        paddingBottom: 15,
     },
 });
