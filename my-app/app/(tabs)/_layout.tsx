@@ -7,6 +7,7 @@ import ConfigScreen from '@/src/pages/configurations/configurations';
 import LoginScreen from '@/src/pages/login/login';
 import Register from '@/src/pages/register/register';
 import RecoverPassword from '@/src/pages/recoverPassword/recoverPassword';
+import EventEdit from '@/src/pages/eventEdit/eventEdit';
 
 const Tabs = createBottomTabNavigator();
 
@@ -34,6 +35,10 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="recover" 
         component={RecoverPassword}
+        options={{tabBarButton: () => null}} />
+      <Tabs.Screen 
+        name="eventEdit" 
+        component={EventEdit}
         options={{tabBarButton: () => null}} />
 
       <Tabs.Screen
