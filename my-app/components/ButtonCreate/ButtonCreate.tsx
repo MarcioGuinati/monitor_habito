@@ -1,13 +1,16 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-interface ButtonProps {
-  onPress?: (event: GestureResponderEvent) => void;
-}
+const ButtonCreate: React.FC = () => {
+  const navigation = useNavigation();
 
-const ButtonCreate: React.FC<ButtonProps> = ({ onPress }) => {
+  const handleNovoEventoPress = () => {
+    navigation.navigate("eventEdit", { eventId: null });
+  };
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={handleNovoEventoPress}>
       <Text style={styles.text}>Criar novo evento</Text>
     </TouchableOpacity>
   );
