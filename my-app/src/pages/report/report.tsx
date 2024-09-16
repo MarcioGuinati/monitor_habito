@@ -1,102 +1,161 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { PieChart } from "react-native-chart-kit";
+import { db } from "../../firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function PixChart() {
+  const [approvedCount, setApprovedCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
 
-export default function TabTwoScreen() {
+  useEffect(() => {
+    const fetchTransacoes = async () => {
+      const querySnapshot = await getDocs(collection(db, "eventos"));
+      let approved = 0;
+      let failed = 0;
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.status === true) {
+          approved += 1;
+        } else if (data.status === false) {
+          failed += 1;
+        }
+      });
+
+      setApprovedCount(approved);
+      setFailedCount(failed);
+    };
+
+    fetchTransacoes();
+  }, []);
+
+  const screenWidth = Dimensions.get("window").width;
+
+  const pieChartData = [
+    {
+      name: "Realizado",
+      count: approvedCount,
+      color: "#4CAF50",
+    },
+    {
+      name: "Não Realizado",
+      count: failedCount,
+      color: "#FF5252",
+    },
+  ];
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}></Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <Text style={styles.title}>Realizado x Não Realizados</Text>
+        <Text style={styles.subtitle}>
+          Percentual de hábitos realizados e não realizados ao longo do uso
+        </Text>
+
+        {/* Container com fundo diferente para o gráfico */}
+        <View style={[styles.chartContainer, { width: screenWidth * 0.9 }]}>
+          <PieChart
+            data={pieChartData}
+            width={screenWidth * 0.9}
+            height={220}
+            chartConfig={{
+              backgroundColor: "#f5f5f5",
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+            hasLegend={false} // Desativa a legenda embutida
+          />
+        </View>
+
+        {/* Legenda personalizada */}
+        <View style={styles.legendContainer}>
+          {pieChartData.map((item, index) => (
+            <View key={index} style={styles.legendItem}>
+              <View style={[styles.legendColor, { backgroundColor: item.color }]} />
+              <Text style={styles.legendText}>
+                {item.name}: {item.count}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: "white",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  header: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "orange",
+    height: 75,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
+  scrollViewContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 100, // Ajustado para ficar abaixo do header
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+    color: "#7F7F7F",
+  },
+  chartContainer: {
+    marginTop: 20,
+    backgroundColor: "#f0f0f0", // Cor de fundo do container
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  legendContainer: {
+    marginTop: 20,
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  legendColor: {
+    width: 16,
+    height: 16,
+    marginRight: 10,
+    borderRadius: 8,
+  },
+  legendText: {
+    fontSize: 16,
+    color: "#333",
   },
 });
