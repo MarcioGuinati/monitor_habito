@@ -4,7 +4,7 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, getDocs, deleteDoc, doc} from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 interface Evento {
@@ -19,18 +19,15 @@ export default function Event() {
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        const fetchEventos = async () => {
-            const querySnapshot = await getDocs(collection(db, "eventos"));
-            const eventosList: Evento[] = querySnapshot.docs.map(
-                (doc) =>
-                    ({
-                        id: doc.id,
-                        ...doc.data(),
-                    } as Evento));
+        const unsubscribe = onSnapshot(collection(db, "eventos"), (snapshot) => {
+            const eventosList: Evento[] = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Evento[];
             setEventos(eventosList);
-        };
+        });
 
-        fetchEventos();
+        return () => unsubscribe();
     }, []);
 
     const handleExcluirEvento = async (index: number) => {

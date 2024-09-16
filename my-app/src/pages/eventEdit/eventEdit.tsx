@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase/config_firebase";
 import CurrentDate from "@/components/Date/CurrentDate";
 import CurrentTime from "@/components/Hour/CurrentTime";
@@ -11,7 +11,7 @@ import ButtonBack from "@/components/ButtonBack/ButtonBack";
 
 export default function EventEdit() {
     const [editingTitle, setEditingTitle] = useState(false);
-    const [eventTitle, setEventTitle] = useState("Título do Evento");
+    const [eventTitle, setEventTitle] = useState("Escreva seu título");
     const [eventNotes, setEventNotes] = useState("");
 
     const navigation = useNavigation();
@@ -21,22 +21,28 @@ export default function EventEdit() {
     const titleInputRef = useRef<TextInput>(null);
 
     useEffect(() => {
-        const fetchEvento = async () => {
-            try {
-                const docRef = doc(db, "eventos", eventId);
-                const docSnapshot = await getDoc(docRef);
-                if (docSnapshot.exists()) {
-                    const eventData = docSnapshot.data();
-                    setEventTitle(eventData.nome || "Título do Evento");
-                    setEventNotes(eventData.notas || "");
-                } else {
-                    console.log(`Evento com ID ${eventId} não encontrado.`);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar dados do evento:", error);}};
+        if (eventId) {
+            const fetchEvento = async () => {
+                try {
+                    const docRef = doc(db, "eventos", eventId);
+                    const docSnapshot = await getDoc(docRef);
+                    if (docSnapshot.exists()) {
+                        const eventData = docSnapshot.data();
+                        setEventTitle(eventData.nome || "Título do Evento");
+                        setEventNotes(eventData.notas || "");
+                    } else {
+                        console.log(`Evento com ID ${eventId} não encontrado.`);
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar dados do evento:", error);
+                }};
 
-        fetchEvento();
-    }, [eventId]);
+                fetchEvento();
+            } else {
+                setEventTitle("Escreva seu título");
+                setEventNotes("");
+            }
+          }, [eventId]);
 
     useEffect(() => {
         if (editingTitle && titleInputRef.current) {
@@ -54,23 +60,34 @@ export default function EventEdit() {
     const handleTitleChange = (newTitle: string) => {
         setEventTitle(newTitle);};
 
-    const handleSaveTitle = async () => {
-        setEditingTitle(false);
-        try {
-            const docRef = doc(db, "eventos", eventId);
-            await updateDoc(docRef, { nome: eventTitle });
-            console.log(`Evento com ID ${eventId} atualizado.`);
-        } catch (error) {
-            console.error("Erro ao atualizar dados do evento:", error);}};
+    const handleSaveTitle = () => {
+        setEditingTitle(false);};
 
     const handleButtonSavePress = async () => {
         try {
-            const docRef = doc(db, "eventos", eventId);
-            await updateDoc(docRef, { nome: eventTitle, notas: eventNotes });
-            console.log(`Evento com ID ${eventId} atualizado no Firestore.`);
+            if (eventId) {
+                const docRef = doc(db, "eventos", eventId);
+                await updateDoc(docRef, { nome: eventTitle, notas: eventNotes });
+                console.log(`Evento com ID ${eventId} atualizado no Firestore.`);
+            } else {
+                const dataAtual = new Date().toLocaleDateString();
+                const horaAtual = new Date().toLocaleTimeString();
+                const novoEventoData = {
+                    nome: eventTitle,
+                    notas: eventNotes,
+                    data: dataAtual,
+                    hora: horaAtual,
+                    status: false,};
+
+                const docRef = await addDoc(collection(db, "eventos"), novoEventoData);
+                console.log(`Novo evento criado com ID ${docRef.id}`);
+                setEventTitle("Escreva seu título");
+                setEventNotes("");}
+
+            navigation.navigate("home");
         } catch (error) {
-            console.error("Erro ao atualizar dados do evento no Firestore:",error);
-        } navigation.navigate("home");};
+            console.error("Erro ao salvar o evento no Firestore:", error);
+        }};
 
     return (
         <View style={styles.container}>
