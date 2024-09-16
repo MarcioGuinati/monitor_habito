@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { PieChart } from "react-native-chart-kit";
-import { db } from "../../firebase/firebase";
+import { db } from "../../firebase/config_firebase";
 import { collection, getDocs } from "firebase/firestore";
 
 export default function PixChart() {

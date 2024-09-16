@@ -78,8 +78,16 @@ export default function Event() {
                                 !updatedEventos[index].checked;
                             setEventos(updatedEventos);
                         }}
-                        containerStyle={styles.checkbox}/>
-
+                        containerStyle={styles.checkbox}
+                    />
+                    {/* Aplica o estilo riscado se o checkbox estiver marcado */}
+                    <Text
+                        style={[
+                            styles.texto, 
+                            evento.checked ? styles.textoRiscado : null
+                        ]}>
+                        {evento.nome}
+                    </Text>
                     <Pressable
                         style={styles.backgroundIcones}
                         onPress={() => {
@@ -196,5 +204,12 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: "center",
         justifyContent: "center",
+    },
+    texto: {
+        fontSize: 18,
+    },
+    textoRiscado: {
+        textDecorationLine: 'line-through', // Aplica o efeito de riscar o texto
+        color: '#999', // Deixa o texto com cor diferente ao ser riscado
     },
 });
