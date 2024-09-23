@@ -4,20 +4,23 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, onSnapshot, deleteDoc, doc} from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, updateDoc, getDoc} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 interface Evento {
     id: string;
     nome: string;
     checked?: boolean;
+    status?: boolean;
 }
+
 
 export default function Event() {
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
-
+    const [selectAll, setSelectAll] = useState(false);
+    
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, "eventos"), (snapshot) => {
             const eventosList: Evento[] = snapshot.docs.map((doc) => ({
@@ -50,6 +53,43 @@ export default function Event() {
     const handleEventEditPress = (eventId: string) => {
         navigation.navigate("eventEdit", { eventId });};
 
+    
+    // marcar todos os checkbox sem alterar o estado dos itens
+    const toggleSelectAll = () => {
+        setSelectAll(!selectAll);
+    };
+
+   // Função para marcar/desmarcar individualmente, riscar o texto e verificar no Firebase
+    const toggleIndividualCheckbox = async (index: number) => {
+    const updatedEventos = [...eventos];
+    const evento = updatedEventos[index];
+
+    // Verifica o status no Firebase antes de alterar
+    try {
+        const eventoRef = doc(db, 'tasks', evento.id); // Referência ao documento da tarefa
+        const eventoSnapshot = await getDoc(eventoRef); // Obtém o documento do banco de dados
+
+        if (eventoSnapshot.exists()) {
+            const statusAtual = eventoSnapshot.data().status; // Obtém o status atual do documento
+
+            // Atualiza o status baseado no que está no Firebase
+            evento.checked = !statusAtual;
+            evento.status = evento.checked;
+
+            // Atualiza o estado local
+            setEventos(updatedEventos);
+
+            // Atualiza o banco de dados para refletir o novo status
+            await updateDoc(eventoRef, {
+                status: evento.status
+            });
+        } else {
+            console.error('Documento não encontrado');
+        }
+    } catch (error) {
+        console.error('Erro ao verificar/atualizar o status no banco de dados:', error);
+    }
+};
     return (
         <View style={styles.scrollViewContent}>
             {eventos.map((evento, index) => (
@@ -70,24 +110,36 @@ export default function Event() {
                         />
                     </Pressable>
 
-                    <CheckBox
-                        checked={evento.checked || false}
-                        onPress={() => {
-                            const updatedEventos = [...eventos];
-                            updatedEventos[index].checked =
-                                !updatedEventos[index].checked;
-                            setEventos(updatedEventos);
-                        }}
-                        containerStyle={styles.checkbox}
-                    />
-                    {/* Aplica o estilo riscado se o checkbox estiver marcado */}
-                    <Text
-                        style={[
-                            styles.texto, 
-                            evento.checked ? styles.textoRiscado : null
-                        ]}>
-                        {evento.nome}
-                    </Text>
+                     {/* Checkbox para selecionar todas as tasks sem riscar os textos */}
+                        <View>
+                            <CheckBox
+                                title="Selecionar Todos"
+                                checked={selectAll}
+                                onPress={toggleSelectAll}
+                                containerStyle={styles.checkbox}
+                            />
+                        </View>
+
+                        {eventos.map((evento, index) => (
+                        <View key={evento.id} style={styles.containerEvento}>
+                            {/* Checkbox global controlado pelo estado selectAll */}
+                            <CheckBox
+                                checked={selectAll || evento.checked} // Seleciona se global for true ou o próprio item estiver checked
+                                onPress={() => toggleIndividualCheckbox(index)} // Atualiza o checkbox individual
+                                containerStyle={styles.checkbox}
+                            />
+
+                            {/* Texto que fica riscado apenas se o checkbox individual estiver marcado */}
+                            <Text
+                                style={[
+                                    styles.texto,
+                                    evento.checked ? styles.textoRiscado : null
+                                ]}
+                            >
+                                {evento.nome}
+                            </Text>
+                        </View>
+                    ))}
                     <Pressable
                         style={styles.backgroundIcones}
                         onPress={() => {
