@@ -4,13 +4,14 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
-import { collection, onSnapshot, deleteDoc, doc} from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 interface Evento {
     id: string;
     nome: string;
     checked?: boolean;
+    status?: boolean;
 }
 
 export default function Event() {
@@ -45,6 +46,27 @@ export default function Event() {
         }
     };
 
+    const handleCheckboxToggle = async (index: number) => {
+        const updatedEventos = [...eventos];
+        const evento = updatedEventos[index];
+        evento.checked = !evento.checked;
+
+        // Atualiza o status do evento no Firestore para true se marcado, false se desmarcado
+        evento.status = evento.checked;
+
+        setEventos(updatedEventos);
+
+        try {
+            await updateDoc(doc(db, "eventos", evento.id), { 
+                checked: evento.checked, 
+                status: evento.status 
+            });
+            console.log(`Status do evento com ID ${evento.id} atualizado no Firestore.`);
+        } catch (error) {
+            console.error("Erro ao atualizar o status do evento no Firestore:", error);
+        }
+    };
+
     const navigation = useNavigation();
 
     const handleEventEditPress = (eventId: string) => {
@@ -58,7 +80,14 @@ export default function Event() {
                         <Text style={styles.numeroOrdem}>{evento.id}</Text>
                     </View>
 
-                    <Text style={styles.textoEvento}>{evento.nome}</Text>
+                    <Text
+                        style={[
+                            styles.textoEvento,
+                            evento.checked && styles.checkedText,
+                        ]}
+                    >
+                        {evento.nome}
+                    </Text>
 
                     <Pressable
                         style={styles.backgroundIcones}
@@ -72,22 +101,9 @@ export default function Event() {
 
                     <CheckBox
                         checked={evento.checked || false}
-                        onPress={() => {
-                            const updatedEventos = [...eventos];
-                            updatedEventos[index].checked =
-                                !updatedEventos[index].checked;
-                            setEventos(updatedEventos);
-                        }}
-                        containerStyle={styles.checkbox}
-                    />
-                    {/* Aplica o estilo riscado se o checkbox estiver marcado */}
-                    <Text
-                        style={[
-                            styles.texto, 
-                            evento.checked ? styles.textoRiscado : null
-                        ]}>
-                        {evento.nome}
-                    </Text>
+                        onPress={() => handleCheckboxToggle(index)}
+                        containerStyle={styles.checkbox}/>
+
                     <Pressable
                         style={styles.backgroundIcones}
                         onPress={() => {
@@ -158,6 +174,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         flex: 1,
     },
+    checkedText: {
+        textDecorationLine: "line-through",
+        color: "gray",
+    },
     backgroundIcones: {
         backgroundColor: "white",
     },
@@ -204,12 +224,5 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: "center",
         justifyContent: "center",
-    },
-    texto: {
-        fontSize: 18,
-    },
-    textoRiscado: {
-        textDecorationLine: 'line-through', // Aplica o efeito de riscar o texto
-        color: '#999', // Deixa o texto com cor diferente ao ser riscado
     },
 });
