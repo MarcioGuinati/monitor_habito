@@ -110,6 +110,17 @@ export default function Event() {
                         />
                     </Pressable>
 
+
+                    <CheckBox
+                        checked={evento.checked || false}
+                        onPress={() => {
+                            const updatedEventos = [...eventos];
+                            updatedEventos[index].checked =
+                                !updatedEventos[index].checked;
+                            setEventos(updatedEventos);
+                        }}
+                        containerStyle={styles.checkbox}/>
+
                      {/* Checkbox para selecionar todas as tasks sem riscar os textos */}
                         <View>
                             <CheckBox
@@ -256,12 +267,5 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: "center",
         justifyContent: "center",
-    },
-    texto: {
-        fontSize: 18,
-    },
-    textoRiscado: {
-        textDecorationLine: 'line-through', // Aplica o efeito de riscar o texto
-        color: '#999', // Deixa o texto com cor diferente ao ser riscado
     },
 });
