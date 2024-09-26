@@ -11,8 +11,7 @@ interface Evento {
     id: string;
     nome: string;
     checked?: boolean;
-    status?: boolean;
-}
+    status?: boolean;}
 
 export default function Event() {
     const [eventos, setEventos] = useState<Evento[]>([]);
@@ -25,11 +24,9 @@ export default function Event() {
                 id: doc.id,
                 ...doc.data(),
             })) as Evento[];
-            setEventos(eventosList);
-        });
+            setEventos(eventosList);});
 
-        return () => unsubscribe();
-    }, []);
+        return () => unsubscribe();}, []);
 
     const handleExcluirEvento = async (index: number) => {
         const updatedEventos = [...eventos];
@@ -43,15 +40,12 @@ export default function Event() {
             console.log(`Evento com ID ${eventIdToDelete} excluído do Firestore.`);
         } catch (error) {
             console.error("Erro ao excluir o evento do Firestore:", error);
-        }
-    };
+        }};
 
     const handleCheckboxToggle = async (index: number) => {
         const updatedEventos = [...eventos];
         const evento = updatedEventos[index];
         evento.checked = !evento.checked;
-
-        // Atualiza o status do evento no Firestore para true se marcado, false se desmarcado
         evento.status = evento.checked;
 
         setEventos(updatedEventos);
@@ -64,8 +58,7 @@ export default function Event() {
             console.log(`Status do evento com ID ${evento.id} atualizado no Firestore.`);
         } catch (error) {
             console.error("Erro ao atualizar o status do evento no Firestore:", error);
-        }
-    };
+        }};
 
     const navigation = useNavigation();
 
@@ -83,9 +76,7 @@ export default function Event() {
                     <Text
                         style={[
                             styles.textoEvento,
-                            evento.checked && styles.checkedText,
-                        ]}
-                    >
+                            evento.checked && styles.checkedText,]}>
                         {evento.nome}
                     </Text>
 
@@ -95,8 +86,7 @@ export default function Event() {
                         <Edit
                             name={"pencil-square-o"}
                             size={25}
-                            color="black"
-                        />
+                            color="black"/>
                     </Pressable>
 
                     <CheckBox
