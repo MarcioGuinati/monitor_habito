@@ -4,6 +4,9 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
+
+import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
+
 import { collection, onSnapshot, deleteDoc, doc, updateDoc, getDoc} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
@@ -11,8 +14,12 @@ interface Evento {
     id: string;
     nome: string;
     checked?: boolean;
+
+    status?: boolean;}
+
     status?: boolean;
 }
+
 
 
 export default function Event() {
@@ -27,11 +34,9 @@ export default function Event() {
                 id: doc.id,
                 ...doc.data(),
             })) as Evento[];
-            setEventos(eventosList);
-        });
+            setEventos(eventosList);});
 
-        return () => unsubscribe();
-    }, []);
+        return () => unsubscribe();}, []);
 
     const handleExcluirEvento = async (index: number) => {
         const updatedEventos = [...eventos];
@@ -45,8 +50,25 @@ export default function Event() {
             console.log(`Evento com ID ${eventIdToDelete} excluído do Firestore.`);
         } catch (error) {
             console.error("Erro ao excluir o evento do Firestore:", error);
-        }
-    };
+        }};
+
+    const handleCheckboxToggle = async (index: number) => {
+        const updatedEventos = [...eventos];
+        const evento = updatedEventos[index];
+        evento.checked = !evento.checked;
+        evento.status = evento.checked;
+
+        setEventos(updatedEventos);
+
+        try {
+            await updateDoc(doc(db, "eventos", evento.id), { 
+                checked: evento.checked, 
+                status: evento.status 
+            });
+            console.log(`Status do evento com ID ${evento.id} atualizado no Firestore.`);
+        } catch (error) {
+            console.error("Erro ao atualizar o status do evento no Firestore:", error);
+        }};
 
     const navigation = useNavigation();
 
@@ -98,7 +120,12 @@ export default function Event() {
                         <Text style={styles.numeroOrdem}>{evento.id}</Text>
                     </View>
 
-                    <Text style={styles.textoEvento}>{evento.nome}</Text>
+                    <Text
+                        style={[
+                            styles.textoEvento,
+                            evento.checked && styles.checkedText,]}>
+                        {evento.nome}
+                    </Text>
 
                     <Pressable
                         style={styles.backgroundIcones}
@@ -106,13 +133,15 @@ export default function Event() {
                         <Edit
                             name={"pencil-square-o"}
                             size={25}
-                            color="black"
-                        />
+                            color="black"/>
                     </Pressable>
 
 
                     <CheckBox
                         checked={evento.checked || false}
+
+                        onPress={() => handleCheckboxToggle(index)}
+                        containerStyle={styles.checkbox}/>
                         onPress={() => {
                             const updatedEventos = [...eventos];
                             updatedEventos[index].checked =
@@ -151,6 +180,7 @@ export default function Event() {
                             </Text>
                         </View>
                     ))}
+
                     <Pressable
                         style={styles.backgroundIcones}
                         onPress={() => {
@@ -221,6 +251,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         flex: 1,
     },
+    checkedText: {
+        textDecorationLine: "line-through",
+        color: "gray",
+    },
     backgroundIcones: {
         backgroundColor: "white",
     },
@@ -268,4 +302,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+});
 });
