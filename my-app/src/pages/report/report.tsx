@@ -2,19 +2,18 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { db } from "../../firebase/config_firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function PixChart() {
   const [approvedCount, setApprovedCount] = useState(0);
   const [failedCount, setFailedCount] = useState(0);
 
   useEffect(() => {
-    const fetchTransacoes = async () => {
-      const querySnapshot = await getDocs(collection(db, "eventos"));
+    const unsubscribe = onSnapshot(collection(db, "eventos"), (snapshot) => {
       let approved = 0;
       let failed = 0;
 
-      querySnapshot.forEach((doc) => {
+      snapshot.forEach((doc) => {
         const data = doc.data();
         if (data.status === true) {
           approved += 1;
@@ -25,9 +24,10 @@ export default function PixChart() {
 
       setApprovedCount(approved);
       setFailedCount(failed);
-    };
+    });
 
-    fetchTransacoes();
+    // Limpar a assinatura ao desmontar o componente
+    return () => unsubscribe();
   }, []);
 
   const screenWidth = Dimensions.get("window").width;
