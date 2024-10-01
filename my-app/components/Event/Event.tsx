@@ -6,6 +6,7 @@ import { CheckBox } from "react-native-elements";
 import { db } from "../../src/firebase/config_firebase";
 import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import CheckAll from "../CheckAll/CheckAll";
 
 interface Evento {
     id: string;
@@ -67,6 +68,7 @@ export default function Event() {
 
     return (
         <View style={styles.scrollViewContent}>
+            <CheckAll eventos={eventos} setEventos={setEventos} />
             {eventos.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>
@@ -140,11 +142,11 @@ const styles = StyleSheet.create({
     containerEvento: {
         backgroundColor: "white",
         flexDirection: "row",
-        padding: 10,
+        padding: 3,
         borderWidth: 1,
         borderColor: "white",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: 5,
         width: "100%",
     },
     backgroundNumeroOrdem: {
