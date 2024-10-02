@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
         height: 75,
         justifyContent: "center",
         alignItems: "center",
+        marginBottom: 3,
     },
     daysWeekContainer: {
         width: 240,

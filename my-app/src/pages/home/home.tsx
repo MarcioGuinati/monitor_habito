@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     },
     eventContainer: {
         flex: 1,
-        marginTop: 175,
+        marginTop: 155,
     },
     buttonCreateWrapper: {
         position: "absolute",
