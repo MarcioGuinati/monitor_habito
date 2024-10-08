@@ -1,12 +1,40 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from "../../src/firebase/config_firebase";
 
 const ButtonCreate: React.FC = () => {
   const navigation = useNavigation();
 
-  const handleNovoEventoPress = () => {
-    navigation.navigate("eventEdit", { eventId: null });
+  const findNextAvailableId = async () => {
+    try {
+      const eventosCollection = collection(db, "eventos");
+      const querySnapshot = await getDocs(eventosCollection);
+      const ids = querySnapshot.docs.map(doc => parseInt(doc.id, 10)).sort((a, b) => a - b);
+
+      let newId = 1;
+      for (let i = 0; i < ids.length; i++) {
+        if (ids[i] !== newId) {
+          break;
+        }
+        newId++;
+      }
+
+      return newId.toString().padStart(2, '0');
+    } catch (error) {
+      console.error("Erro ao buscar IDs dos eventos:", error);
+      return "01";
+    }
+  };
+
+  const handleNovoEventoPress = async () => {
+    try {
+      const nextId = await findNextAvailableId();
+      navigation.navigate("eventEdit", { eventId: nextId });
+    } catch (error) {
+      console.error("Erro ao gerar novo ID para evento:", error);
+    }
   };
 
   return (
