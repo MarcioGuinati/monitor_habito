@@ -31,7 +31,7 @@ const ButtonCreate: React.FC = () => {
   const handleNovoEventoPress = async () => {
     try {
       const nextId = await findNextAvailableId();
-      navigation.navigate("eventEdit", { eventId: nextId });
+      navigation.navigate("eventEdit", { eventId: nextId, isNewEvent: true });
     } catch (error) {
       console.error("Erro ao gerar novo ID para evento:", error);
     }
