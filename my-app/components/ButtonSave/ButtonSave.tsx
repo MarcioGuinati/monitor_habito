@@ -8,7 +8,7 @@ interface ButtonProps {
 const ButtonSave: React.FC<ButtonProps> = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>Salvar</Text>
+      <Text style={styles.text}>SALVAR</Text>
     </TouchableOpacity>
   );
 };
