@@ -61,14 +61,24 @@ const CheckAll: React.FC<CheckAllProps> = ({ eventos, setEventos }) => {
 
 const styles = StyleSheet.create({
     checkAllContainer: {
-        flexDirection: "row-reverse",
+        flexDirection: "row",
+        justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#f0f0f0",
+        padding: 10,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
         width: "100%",
-        height: 33,
-        marginTop: 1,
+        marginTop: 15,
+        marginBottom: 10,
+        height: 50,
     },
     checkbox: {
-        marginRight: 38,
+        marginRight: 10,
         alignSelf: "flex-end",
         padding: 0,
     },

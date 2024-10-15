@@ -8,7 +8,7 @@ interface ButtonProps {
 const ButtonBack: React.FC<ButtonProps> = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>Voltar</Text>
+      <Text style={styles.text}>VOLTAR</Text>
     </TouchableOpacity>
   );
 };

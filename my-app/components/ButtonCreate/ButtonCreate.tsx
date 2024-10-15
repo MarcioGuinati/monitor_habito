@@ -39,7 +39,7 @@ const ButtonCreate: React.FC = () => {
 
   return (
     <TouchableOpacity style={styles.button} onPress={handleNovoEventoPress}>
-      <Text style={styles.text}>Criar novo evento</Text>
+      <Text style={styles.text}>CRIAR NOVO HÁBITO</Text>
     </TouchableOpacity>
   );
 };
@@ -53,10 +53,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    bottom: 20,
   },
   text: {
     color: 'white',
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });
