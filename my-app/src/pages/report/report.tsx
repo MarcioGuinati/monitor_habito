@@ -104,11 +104,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "orange",
-    height: 75,
+    height: 90,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
-  },
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+},
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -118,21 +119,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 100, // Ajustado para ficar abaixo do header
+    paddingVertical: 100,
   },
   title: {
-    fontSize: 24, // Maior destaque no título
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333", // Cor mais escura para destaque
-    fontFamily: "Roboto", // Fonte personalizada
+    color: "#333",
+    fontFamily: "Roboto",
   },
   subtitle: {
     fontSize: 18,
     marginTop: 10,
     textAlign: "center",
     color: "#7F7F7F",
-    fontFamily: "Roboto", // Fonte personalizada
+    fontFamily: "Roboto",
   },
   chartContainer: {
     marginTop: 20,

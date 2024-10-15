@@ -21,8 +21,10 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: "orange",
-        height: 75,
+        height: 90,
         justifyContent: "center",
         alignItems: "center",
+        borderBottomLeftRadius: 25,
+        borderBottomRightRadius: 25,
     },
 });
