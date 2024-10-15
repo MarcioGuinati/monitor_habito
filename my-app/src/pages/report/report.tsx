@@ -121,15 +121,18 @@ const styles = StyleSheet.create({
     paddingVertical: 100, // Ajustado para ficar abaixo do header
   },
   title: {
-    fontSize: 22,
+    fontSize: 24, // Maior destaque no título
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333", // Cor mais escura para destaque
+    fontFamily: "Roboto", // Fonte personalizada
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     marginTop: 10,
     textAlign: "center",
     color: "#7F7F7F",
+    fontFamily: "Roboto", // Fonte personalizada
   },
   chartContainer: {
     marginTop: 20,
