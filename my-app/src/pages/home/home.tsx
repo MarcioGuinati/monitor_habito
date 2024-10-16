@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: "orange",
-        height: 90,
+        height: 80,
         justifyContent: "center",
         alignItems: "center",
-        borderBottomLeftRadius: 25,
-        borderBottomRightRadius: 25,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     weekContainerWrapper: {
-        marginTop: 20,
+        marginTop: 5,
         zIndex: 1,
     },
     eventContainer: {
