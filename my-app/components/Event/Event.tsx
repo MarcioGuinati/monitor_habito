@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         elevation: 3,
       },
     backgroundNumeroOrdem: {
-        backgroundColor: "#EADCFE",
+        backgroundColor: "#bdc3c7",
         borderRadius: 40,
         width: 40,
         height: 40,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     numeroOrdem: {
-        color: "#20015D",
+        color: "#fff",
         textAlign: "center",
         fontSize: 25,
     },
