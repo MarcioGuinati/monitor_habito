@@ -13,6 +13,9 @@ export default function EventEdit() {
     const [editingTitle, setEditingTitle] = useState(false);
     const [eventTitle, setEventTitle] = useState("Escreva seu título");
     const [eventNotes, setEventNotes] = useState("");
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState(new Date());
+
 
     const navigation = useNavigation();
     const route = useRoute();
@@ -43,6 +46,7 @@ export default function EventEdit() {
                     const eventData = docSnapshot.data();
                     setEventTitle(eventData.nome || "Título do Evento");
                     setEventNotes(eventData.notas || "");
+                    setSelectedDate(new Date(eventData.data)); // Define a data do evento
                 } else {
                     console.log(`Evento com ID ${eventId} não encontrado.`);}
                 } catch (error) {
@@ -73,15 +77,13 @@ export default function EventEdit() {
         const handleButtonSavePress = async () => {
             try {
                 let currentEventId = eventId || (await findNextAvailableId());
-        
-                const dataAtual = new Date().toLocaleDateString();
-                const horaAtual = new Date().toLocaleTimeString();
+
                 const eventoData = {
                 id: currentEventId,
                 nome: eventTitle,
                 notas: eventNotes,
-                data: dataAtual,
-                hora: horaAtual,
+                data: selectedDate.toLocaleDateString(), // Usa a data selecionada
+                hora: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Usa a hora selecionada
                 status: false,};
         
             const docRef = doc(db, "eventos", currentEventId);
@@ -100,8 +102,9 @@ export default function EventEdit() {
 
             <View style={styles.eventEditBox}>
                 <View style={styles.dateAndHour}>
-                    <CurrentDate />
-                    <CurrentTime />
+                    <CurrentDate onDateChange={setSelectedDate} />
+                    <CurrentTime onTimeChange={setSelectedTime} />
+
                 </View>
 
                 <View style={styles.titleBox}>

@@ -1,24 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-const CurrentTime = () => {
-  const [currentTime, setCurrentTime] = useState('');
+interface CurrentTimeProps {
+  onTimeChange: (time: Date) => void;
+}
 
-  useEffect(() => {
-    const updateCurrentTime = () => {
-      const now = new Date();
-      const formattedTime = now.toLocaleTimeString();
-      setCurrentTime(formattedTime);
-    };
+const CurrentTime: React.FC<CurrentTimeProps> = ({ onTimeChange }) => {
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
-    const interval = setInterval(updateCurrentTime, 1000);
+  const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    return () => clearInterval(interval);
-  }, []);
+  const handleTimeChange = (event: any, time?: Date) => {
+    if (Platform.OS === 'android') setShowPicker(false); // Fecha o relógio no Android
+    if (time) {
+      setSelectedTime(time);
+      onTimeChange(time); // Envia a hora selecionada para o componente EventEdit
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.timeText}>{currentTime}</Text>
+    <View>
+      <Pressable style={styles.container} onPress={() => setShowPicker(true)}>
+        <Text style={styles.timeText}>Definir Hora</Text>
+      </Pressable>
+
+      {showPicker && (
+        <DateTimePicker
+          value={selectedTime}
+          mode="time"
+          display="default"
+          onChange={handleTimeChange}
+        />
+      )}
     </View>
   );
 };

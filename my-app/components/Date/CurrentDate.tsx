@@ -1,13 +1,41 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-const CurrentDate = () => {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
+interface CurrentDateProps {
+  onDateChange: (date: Date) => void;
+}
+
+const CurrentDate: React.FC<CurrentDateProps> = ({ onDateChange }) => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+
+  const formattedDate = `${selectedDate.getDate()}/${(selectedDate.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}/${selectedDate.getFullYear()}`;
+
+  const handleDateChange = (event: any, date?: Date) => {
+    if (Platform.OS === 'android') setShowPicker(false); // Fecha o calendário no Android após a seleção
+    if (date) {
+      setSelectedDate(date);
+      onDateChange(date); // Envia a data selecionada para o componente EventEdit
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.dateText}>{formattedDate}</Text>
+    <View>
+      <Pressable style={styles.container} onPress={() => setShowPicker(true)}>
+        <Text style={styles.dateText}>Definir Data</Text>
+      </Pressable>
+
+      {showPicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
     </View>
   );
 };
