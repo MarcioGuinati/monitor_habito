@@ -64,7 +64,16 @@ export default function Event() {
     const navigation = useNavigation();
 
     const handleEventEditPress = (eventId: string) => {
-        navigation.navigate("eventEdit", { eventId });};
+        const evento = eventos.find(e => e.id === eventId); // Certifique-se de que 'eventos' é o array correto
+        if (evento) {
+            navigation.navigate("eventEdit", { 
+                eventId, 
+                isNewEvent: false, 
+                date: evento.data, 
+                time: evento.hora 
+            });
+        }
+    };
 
     return (
         <View style={styles.scrollViewContent}>
