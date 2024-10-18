@@ -36,11 +36,10 @@ export default function EventEdit() {
 
     useEffect(() => {
         if (isNewEvent) {
-            // Defina os valores iniciais para um novo evento
             setEventTitle("Escreva seu título");
             setEventNotes("");
-            setSelectedDate(null); // Mantenha null para novo evento
-            setSelectedTime(null); // Mantenha null para novo evento
+            setSelectedDate(null);
+            setSelectedTime(null);
         } else {
             if (eventId) {
                 const fetchEvento = async () => {
@@ -50,11 +49,9 @@ export default function EventEdit() {
                         if (docSnapshot.exists()) {
                             const eventData = docSnapshot.data();
                             console.log("Evento data:", eventData.data);
-
                             setEventTitle(eventData.nome || "Título do Evento");
                             setEventNotes(eventData.notas || "");
 
-                            // Verifique se eventData.data é um timestamp do Firebase ou uma string
                             if (eventData.data instanceof firebase.firestore.Timestamp) {
                                 const eventDate = eventData.data.toDate();
                                 console.log("Data do evento (convertida):", eventDate);
@@ -66,41 +63,31 @@ export default function EventEdit() {
                                 setSelectedDate(formattedDate);
                             } else {
                                 console.error("Data não é um objeto de timestamp do Firebase:", eventData.data);
-                                setSelectedDate(null); // Defina como null se não for válido
-                            }
+                                setSelectedDate(null);}
 
-                            // Defina a hora do evento
                             if (eventData.hora) {
                                 setSelectedTime(new Date(`1970-01-01T${eventData.hora}`));
                             } else {
-                                setSelectedTime(null); // Defina como null se não for válida
-                            }
+                                setSelectedTime(null);}
                         } else {
-                            console.log(`Evento com ID ${eventId} não encontrado.`);
-                        }
+                            console.log(`Evento com ID ${eventId} não encontrado.`);}
                     } catch (error) {
-                        console.error("Erro ao buscar dados do evento:", error);
-                    }
-                };
+                        console.error("Erro ao buscar dados do evento:", error);}};
 
                 fetchEvento();
             } else if (date && time) {
                 setSelectedDate(new Date(date));
-                setSelectedTime(new Date(`1970-01-01T${time}`));
-            }
-        }
-    }, [eventId, isNewEvent, date, time]);
+                setSelectedTime(new Date(`1970-01-01T${time}`));}}}, [eventId, isNewEvent, date, time]);
 
     useEffect(() => {
-        console.log("Data selecionada:", selectedDate); // Verifique aqui
+        console.log("Data selecionada:", selectedDate);
     }, [selectedDate]);
 
     useEffect(() => {
         if (editingTitle && titleInputRef.current) {
             titleInputRef.current.focus();
             titleInputRef.current.setSelection(0, eventTitle.length);
-        }
-    }, [editingTitle]);
+        }}, [editingTitle]);
 
     const handleButtonBackPress = () => {
         navigation.navigate("home");};
@@ -119,22 +106,20 @@ export default function EventEdit() {
                 let currentEventId = eventId || (await findNextAvailableId());
 
                 const eventoData = {
-                id: currentEventId,
-                nome: eventTitle,
-                notas: eventNotes,
-                data: selectedDate ? selectedDate.toLocaleDateString() : null, // Usa a data selecionada
-                hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "", // Usa a hora selecionada
-                status: false,};
+                    id: currentEventId,
+                    nome: eventTitle,
+                    notas: eventNotes,
+                    data: selectedDate ? selectedDate.toLocaleDateString() : null,
+                    hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
+                    status: false,};
         
-            const docRef = doc(db, "eventos", currentEventId);
-            await setDoc(docRef, eventoData);
+                const docRef = doc(db, "eventos", currentEventId);
+                await setDoc(docRef, eventoData);
         
-            console.log(`Evento com ID ${currentEventId} salvo no Firestore.`);
-            navigation.navigate("home");
-            } catch (error) {
-                console.error("Erro ao salvar o evento no Firestore:", error);
-            }
-        };
+                console.log(`Evento com ID ${currentEventId} salvo no Firestore.`);
+                navigation.navigate("home");
+                } catch (error) {
+                    console.error("Erro ao salvar o evento no Firestore:", error);}};
 
     return (
         <View style={styles.container}>
@@ -144,7 +129,6 @@ export default function EventEdit() {
                 <View style={styles.dateAndHour}>
                     <CurrentDate selectedDate={selectedDate || null} onDateChange={setSelectedDate} />
                     <CurrentTime selectedTime={selectedTime || null} onTimeChange={setSelectedTime} />
-
                 </View>
 
                 <View style={styles.titleBox}>
