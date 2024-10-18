@@ -39,8 +39,8 @@ export default function EventEdit() {
             // Defina os valores iniciais para um novo evento
             setEventTitle("Escreva seu título");
             setEventNotes("");
-            setSelectedDate(null); // Alterado para null
-            setSelectedTime(null); // Alterado para null
+            setSelectedDate(null); // Mantenha null para novo evento
+            setSelectedTime(null); // Mantenha null para novo evento
         } else {
             if (eventId) {
                 const fetchEvento = async () => {
@@ -49,28 +49,32 @@ export default function EventEdit() {
                         const docSnapshot = await getDoc(docRef);
                         if (docSnapshot.exists()) {
                             const eventData = docSnapshot.data();
-                            console.log("Evento data:", eventData.data); // Log do que está sendo recuperado
+                            console.log("Evento data:", eventData.data);
 
                             setEventTitle(eventData.nome || "Título do Evento");
                             setEventNotes(eventData.notas || "");
 
                             // Verifique se eventData.data é um timestamp do Firebase ou uma string
                             if (eventData.data instanceof firebase.firestore.Timestamp) {
-                                const eventDate = eventData.data.toDate(); // Converta para Date
-                                console.log("Data do evento (convertida):", eventDate); // Log da data convertida
-                                setSelectedDate(eventDate); // Defina a data do evento
+                                const eventDate = eventData.data.toDate();
+                                console.log("Data do evento (convertida):", eventDate);
+                                setSelectedDate(eventDate);
                             } else if (typeof eventData.data === "string") {
-                                // Se for uma string no formato "DD/MM/YYYY", converta-a para um objeto Date
                                 const parts = eventData.data.split("/");
-                                const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]); // Mês é zero-indexado
-                                console.log("Data do evento (convertida de string):", formattedDate); // Log da data convertida
-                                setSelectedDate(formattedDate); // Defina a data do evento
+                                const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                                console.log("Data do evento (convertida de string):", formattedDate);
+                                setSelectedDate(formattedDate);
                             } else {
                                 console.error("Data não é um objeto de timestamp do Firebase:", eventData.data);
+                                setSelectedDate(null); // Defina como null se não for válido
                             }
 
                             // Defina a hora do evento
-                            setSelectedTime(new Date(`1970-01-01T${eventData.hora}`));
+                            if (eventData.hora) {
+                                setSelectedTime(new Date(`1970-01-01T${eventData.hora}`));
+                            } else {
+                                setSelectedTime(null); // Defina como null se não for válida
+                            }
                         } else {
                             console.log(`Evento com ID ${eventId} não encontrado.`);
                         }
@@ -81,9 +85,8 @@ export default function EventEdit() {
 
                 fetchEvento();
             } else if (date && time) {
-                // Se estamos editando e recebemos data e hora como parâmetros
-                setSelectedDate(new Date(date)); // Defina a data recebida
-                setSelectedTime(new Date(`1970-01-01T${time}`)); // Defina a hora recebida
+                setSelectedDate(new Date(date));
+                setSelectedTime(new Date(`1970-01-01T${time}`));
             }
         }
     }, [eventId, isNewEvent, date, time]);
@@ -119,7 +122,7 @@ export default function EventEdit() {
                 id: currentEventId,
                 nome: eventTitle,
                 notas: eventNotes,
-                data: selectedDate ? selectedDate.toLocaleDateString() : "", // Usa a data selecionada
+                data: selectedDate ? selectedDate.toLocaleDateString() : null, // Usa a data selecionada
                 hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "", // Usa a hora selecionada
                 status: false,};
         
