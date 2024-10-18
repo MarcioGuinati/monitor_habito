@@ -40,8 +40,7 @@ export default function Event() {
             await deleteDoc(doc(db, "eventos", eventIdToDelete));
             console.log(`Evento com ID ${eventIdToDelete} excluído do Firestore.`);
         } catch (error) {
-            console.error("Erro ao excluir o evento do Firestore:", error);
-        }};
+            console.error("Erro ao excluir o evento do Firestore:", error);}};
 
     const handleCheckboxToggle = async (index: number) => {
         const updatedEventos = [...eventos];
@@ -54,17 +53,21 @@ export default function Event() {
         try {
             await updateDoc(doc(db, "eventos", evento.id), { 
                 checked: evento.checked, 
-                status: evento.status 
-            });
+                status: evento.status});
             console.log(`Status do evento com ID ${evento.id} atualizado no Firestore.`);
         } catch (error) {
-            console.error("Erro ao atualizar o status do evento no Firestore:", error);
-        }};
+            console.error("Erro ao atualizar o status do evento no Firestore:", error);}};
 
     const navigation = useNavigation();
 
     const handleEventEditPress = (eventId: string) => {
-        navigation.navigate("eventEdit", { eventId });};
+        const evento = eventos.find(e => e.id === eventId);
+        if (evento) {
+            navigation.navigate("eventEdit", { 
+                eventId, 
+                isNewEvent: false, 
+                date: evento.data, 
+                time: evento.hora});}};
 
     return (
         <View style={styles.scrollViewContent}>
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-      },
+    },
     backgroundNumeroOrdem: {
         backgroundColor: "#bdc3c7",
         borderRadius: 40,

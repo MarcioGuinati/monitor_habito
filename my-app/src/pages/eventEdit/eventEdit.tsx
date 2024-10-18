@@ -1,22 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, } from "firebase/firestore";
 import { db } from "../../firebase/config_firebase";
 import CurrentDate from "@/components/Date/CurrentDate";
 import CurrentTime from "@/components/Hour/CurrentTime";
 import Edit from "react-native-vector-icons/FontAwesome";
 import ButtonSave from "@/components/ButtonSave/ButtonSave";
 import ButtonBack from "@/components/ButtonBack/ButtonBack";
+import { firebase } from "@react-native-firebase/firestore";
 
 export default function EventEdit() {
     const [editingTitle, setEditingTitle] = useState(false);
     const [eventTitle, setEventTitle] = useState("Escreva seu título");
     const [eventNotes, setEventNotes] = useState("");
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState(new Date());
+
 
     const navigation = useNavigation();
     const route = useRoute();
-    const { eventId, isNewEvent } = route.params || {};
+    const { eventId, isNewEvent, date, time } = route.params || {};
 
     const titleInputRef = useRef<TextInput>(null);
 
@@ -34,29 +38,56 @@ export default function EventEdit() {
         if (isNewEvent) {
             setEventTitle("Escreva seu título");
             setEventNotes("");
-        } else if (eventId) {
-            const fetchEvento = async () => {
-                try {
-                    const docRef = doc(db, "eventos", eventId);
-                    const docSnapshot = await getDoc(docRef);
-                if (docSnapshot.exists()) {
-                    const eventData = docSnapshot.data();
-                    setEventTitle(eventData.nome || "Título do Evento");
-                    setEventNotes(eventData.notas || "");
-                } else {
-                    console.log(`Evento com ID ${eventId} não encontrado.`);}
-                } catch (error) {
-                    console.error("Erro ao buscar dados do evento:", error);}};
+            setSelectedDate(null);
+            setSelectedTime(null);
+        } else {
+            if (eventId) {
+                const fetchEvento = async () => {
+                    try {
+                        const docRef = doc(db, "eventos", eventId);
+                        const docSnapshot = await getDoc(docRef);
+                        if (docSnapshot.exists()) {
+                            const eventData = docSnapshot.data();
+                            console.log("Evento data:", eventData.data);
+                            setEventTitle(eventData.nome || "Título do Evento");
+                            setEventNotes(eventData.notas || "");
 
-            fetchEvento();}
-        }, [eventId, isNewEvent]);
+                            if (eventData.data instanceof firebase.firestore.Timestamp) {
+                                const eventDate = eventData.data.toDate();
+                                console.log("Data do evento (convertida):", eventDate);
+                                setSelectedDate(eventDate);
+                            } else if (typeof eventData.data === "string") {
+                                const parts = eventData.data.split("/");
+                                const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                                console.log("Data do evento (convertida de string):", formattedDate);
+                                setSelectedDate(formattedDate);
+                            } else {
+                                console.error("Data não é um objeto de timestamp do Firebase:", eventData.data);
+                                setSelectedDate(null);}
+
+                            if (eventData.hora) {
+                                setSelectedTime(new Date(`1970-01-01T${eventData.hora}`));
+                            } else {
+                                setSelectedTime(null);}
+                        } else {
+                            console.log(`Evento com ID ${eventId} não encontrado.`);}
+                    } catch (error) {
+                        console.error("Erro ao buscar dados do evento:", error);}};
+
+                fetchEvento();
+            } else if (date && time) {
+                setSelectedDate(new Date(date));
+                setSelectedTime(new Date(`1970-01-01T${time}`));}}}, [eventId, isNewEvent, date, time]);
+
+    useEffect(() => {
+        console.log("Data selecionada:", selectedDate);
+    }, [selectedDate]);
 
     useEffect(() => {
         if (editingTitle && titleInputRef.current) {
             titleInputRef.current.focus();
             titleInputRef.current.setSelection(0, eventTitle.length);
-        }
-    }, [editingTitle]);
+        }}, [editingTitle]);
 
     const handleButtonBackPress = () => {
         navigation.navigate("home");};
@@ -73,26 +104,22 @@ export default function EventEdit() {
         const handleButtonSavePress = async () => {
             try {
                 let currentEventId = eventId || (await findNextAvailableId());
-        
-                const dataAtual = new Date().toLocaleDateString();
-                const horaAtual = new Date().toLocaleTimeString();
+
                 const eventoData = {
-                id: currentEventId,
-                nome: eventTitle,
-                notas: eventNotes,
-                data: dataAtual,
-                hora: horaAtual,
-                status: false,};
+                    id: currentEventId,
+                    nome: eventTitle,
+                    notas: eventNotes,
+                    data: selectedDate ? selectedDate.toLocaleDateString() : null,
+                    hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
+                    status: false,};
         
-            const docRef = doc(db, "eventos", currentEventId);
-            await setDoc(docRef, eventoData);
+                const docRef = doc(db, "eventos", currentEventId);
+                await setDoc(docRef, eventoData);
         
-            console.log(`Evento com ID ${currentEventId} salvo no Firestore.`);
-            navigation.navigate("home");
-            } catch (error) {
-                console.error("Erro ao salvar o evento no Firestore:", error);
-            }
-        };
+                console.log(`Evento com ID ${currentEventId} salvo no Firestore.`);
+                navigation.navigate("home");
+                } catch (error) {
+                    console.error("Erro ao salvar o evento no Firestore:", error);}};
 
     return (
         <View style={styles.container}>
@@ -100,8 +127,8 @@ export default function EventEdit() {
 
             <View style={styles.eventEditBox}>
                 <View style={styles.dateAndHour}>
-                    <CurrentDate />
-                    <CurrentTime />
+                    <CurrentDate selectedDate={selectedDate || null} onDateChange={setSelectedDate} />
+                    <CurrentTime selectedTime={selectedTime || null} onTimeChange={setSelectedTime} />
                 </View>
 
                 <View style={styles.titleBox}>
