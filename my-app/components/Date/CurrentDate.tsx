@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface CurrentDateProps {
   onDateChange: (date: Date) => void;
-  selectedDate: Date; // Alterado de initialDate para selectedDate
+  selectedDate: Date | null; // Alterado de initialDate para selectedDate
 }
 
 const CurrentDate: React.FC<CurrentDateProps> = ({ onDateChange, selectedDate }) => {
@@ -21,13 +21,17 @@ const CurrentDate: React.FC<CurrentDateProps> = ({ onDateChange, selectedDate })
 
   return (
     <View>
-      <Pressable style={styles.container} onPress={() => setShowPicker(true)}>
-        <Text style={styles.dateText}>{validDate.toLocaleDateString() || "Definir Data"}</Text>
-      </Pressable>
+      <Pressable onPress={() => setShowPicker(true)} style={styles.container}>
+                <Text style={styles.dateText}>
+                    {selectedDate
+                        ? selectedDate.toLocaleDateString()
+                        : "Definir Data"}
+                </Text>
+            </Pressable>
 
       {showPicker && (
         <DateTimePicker
-          value={validDate}
+          value={selectedDate || new Date()} // Usa a data selecionada ou a data atual
           mode="date"
           display="default"
           onChange={handleDateChange}

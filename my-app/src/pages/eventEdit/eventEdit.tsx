@@ -39,8 +39,8 @@ export default function EventEdit() {
             // Defina os valores iniciais para um novo evento
             setEventTitle("Escreva seu título");
             setEventNotes("");
-            setSelectedDate(new Date());
-            setSelectedTime(new Date());
+            setSelectedDate(null); // Alterado para null
+            setSelectedTime(null); // Alterado para null
         } else {
             if (eventId) {
                 const fetchEvento = async () => {
@@ -119,8 +119,8 @@ export default function EventEdit() {
                 id: currentEventId,
                 nome: eventTitle,
                 notas: eventNotes,
-                data: selectedDate.toLocaleDateString(), // Usa a data selecionada
-                hora: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Usa a hora selecionada
+                data: selectedDate ? selectedDate.toLocaleDateString() : "", // Usa a data selecionada
+                hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "", // Usa a hora selecionada
                 status: false,};
         
             const docRef = doc(db, "eventos", currentEventId);

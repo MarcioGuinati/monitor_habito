@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface CurrentTimeProps {
   onTimeChange: (time: Date) => void;
-  selectedTime: Date; // Alterado de initialTime para selectedTime
+  selectedTime: Date | null; // Alterado de initialTime para selectedTime
 }
 
 const CurrentTime: React.FC<CurrentTimeProps> = ({ onTimeChange, selectedTime }) => {
@@ -19,13 +19,17 @@ const CurrentTime: React.FC<CurrentTimeProps> = ({ onTimeChange, selectedTime })
 
   return (
     <View>
-      <Pressable style={styles.container} onPress={() => setShowPicker(true)}>
-        <Text style={styles.timeText}>{selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || "Definir Hora"}</Text>
-      </Pressable>
+      <Pressable onPress={() => setShowPicker(true)} style={styles.container}>
+                <Text style={styles.timeText}>
+                    {selectedTime
+                        ? selectedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                        : "Definir Hora"}
+                </Text>
+            </Pressable>
 
       {showPicker && (
         <DateTimePicker
-          value={selectedTime}
+          value={selectedTime || new Date()} // Usa a hora selecionada ou a hora atual
           mode="time"
           display="default"
           onChange={handleTimeChange}
