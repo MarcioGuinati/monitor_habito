@@ -142,8 +142,8 @@ export default function EventEdit() {
 
             <View style={styles.eventEditBox}>
                 <View style={styles.dateAndHour}>
-                    <CurrentDate selectedDate={selectedDate} onDateChange={setSelectedDate} />
-                    <CurrentTime selectedTime={selectedTime} onTimeChange={setSelectedTime} />
+                    <CurrentDate selectedDate={selectedDate || null} onDateChange={setSelectedDate} />
+                    <CurrentTime selectedTime={selectedTime || null} onTimeChange={setSelectedTime} />
 
                 </View>
 
