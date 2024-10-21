@@ -10,15 +10,19 @@ export default function WeekContainer() {
     const [selectedDate, setSelectedDate] = useState(currentDate);
 
     useEffect(() => {
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-        const days: Date[] = [];
-        for (let i = 0; i < 7; i++) {
-            const day = new Date(startOfWeek);
-            day.setDate(startOfWeek.getDate() + i);
-            days.push(day);
-        }
-        setWeekDays(days);
+        const updateWeekDays = (date: Date) => {
+            const startOfWeek = new Date(date);
+            startOfWeek.setDate(date.getDate() - date.getDay());
+            const days: Date[] = [];
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setDate(startOfWeek.getDate() + i);
+                days.push(day);
+            }
+            setWeekDays(days);
+        };
+
+        updateWeekDays(currentDate);
     }, [currentDate]);
 
     const handleCalendarPress = () => {
@@ -28,9 +32,21 @@ export default function WeekContainer() {
     const handleDateChange = (event: any, date?: Date) => {
         if (date) {
             setSelectedDate(date);
-            // Não atualiza currentDate aqui, pois queremos manter o dia atual
+
+            // Verifica se a data selecionada está fora da semana atual
+            const startOfCurrentWeek = new Date(currentDate);
+            startOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay());
+            const endOfCurrentWeek = new Date(startOfCurrentWeek);
+            endOfCurrentWeek.setDate(startOfCurrentWeek.getDate() + 6);
+
+            if (date < startOfCurrentWeek || date > endOfCurrentWeek) {
+                // Atualiza a semana para o dia selecionado
+                const startOfSelectedWeek = new Date(date);
+                startOfSelectedWeek.setDate(date.getDate() - date.getDay());
+                setCurrentDate(startOfSelectedWeek);
+            }
         }
-        setShowPicker(false); // Fecha o picker após a seleção
+        setShowPicker(false);
     };
 
     return (
@@ -42,10 +58,10 @@ export default function WeekContainer() {
             </View>
             <View style={styles.daysMonthContainer}>
                 {weekDays.map((day, index) => {
-                    const isCurrentDay = 
-                        day.getDate() === currentDate.getDate() && 
-                        day.getMonth() === currentDate.getMonth() && 
-                        day.getFullYear() === currentDate.getFullYear();
+                    const isToday  = 
+                        day.getDate() === new Date().getDate() && 
+                        day.getMonth() === new Date().getMonth() && 
+                        day.getFullYear() === new Date().getFullYear();
                     
                     const isSelectedDay = 
                         day.getDate() === selectedDate.getDate() && 
@@ -57,7 +73,7 @@ export default function WeekContainer() {
                             key={index} 
                             style={[
                                 styles.dayContainer, 
-                                isCurrentDay ? styles.currentDay : 
+                                isToday  ? styles.currentDay : 
                                 isSelectedDay ? styles.selectedDay : null
                             ]}
                         >
