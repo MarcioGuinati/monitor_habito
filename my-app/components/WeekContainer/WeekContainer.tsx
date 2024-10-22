@@ -1,21 +1,66 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { useState, useEffect } from "react";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { format } from "date-fns";
 
-export default function WeekContainer() {
+interface WeekContainerProps {
+    eventos: { data: string }[];
+}
+
+export default function WeekContainer({ eventos }: WeekContainerProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [weekDays, setWeekDays] = useState<Date[]>([]);
+    const [showPicker, setShowPicker] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(currentDate);
 
     useEffect(() => {
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-        const days: Date[] = [];
-        for (let i = 0; i < 7; i++) {
-            const day = new Date(startOfWeek);
-            day.setDate(startOfWeek.getDate() + i);
-            days.push(day);
-        }
-        setWeekDays(days);
+        const updateWeekDays = (date: Date) => {
+            const startOfWeek = new Date(date);
+            startOfWeek.setDate(date.getDate() - date.getDay());
+            const days: Date[] = [];
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setDate(startOfWeek.getDate() + i);
+                days.push(day);
+            }
+            setWeekDays(days);
+        };
+
+        updateWeekDays(currentDate);
     }, [currentDate]);
+
+    const handleCalendarPress = () => {
+        setShowPicker(true);
+    };
+
+    const handleDateChange = (event: any, date?: Date) => {
+        if (date) {
+            setSelectedDate(date);
+
+            const startOfCurrentWeek = new Date(currentDate);
+            startOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay());
+            const endOfCurrentWeek = new Date(startOfCurrentWeek);
+            endOfCurrentWeek.setDate(startOfCurrentWeek.getDate() + 6);
+
+            if (date < startOfCurrentWeek || date > endOfCurrentWeek) {
+                const startOfSelectedWeek = new Date(date);
+                startOfSelectedWeek.setDate(date.getDate() - date.getDay());
+                setCurrentDate(startOfSelectedWeek);
+            }
+        }
+        setShowPicker(false);
+    };
+
+    const diasComEventos = eventos.map(evento => {
+        const [dia, mes, ano] = evento.data.split('/');
+        const formattedDate = new Date(`${ano}-${mes}-${dia}`);
+        return formattedDate instanceof Date && !isNaN(formattedDate.getTime()) 
+            ? format(formattedDate, "dd/MM/yyyy") 
+            : null;
+    }).filter(Boolean);
+    console.log('Eventos:', eventos);
+    console.log('Dias com eventos formatados:', diasComEventos);
 
     return (
         <View style={styles.Container}>
@@ -25,12 +70,48 @@ export default function WeekContainer() {
                 ))}
             </View>
             <View style={styles.daysMonthContainer}>
-                {weekDays.map((day, index) => (
-                    <View key={index} style={[styles.dayContainer, day.getDate() === currentDate.getDate() ? styles.currentDay : null]}>
-                        <Text style={styles.dayMonth}>{day.getDate()}</Text>
-                    </View>
-                ))}
+                {weekDays.map((day, index) => {
+                    const isToday  = 
+                        day.getDate() === new Date().getDate() && 
+                        day.getMonth() === new Date().getMonth() && 
+                        day.getFullYear() === new Date().getFullYear();
+                    
+                    const isSelectedDay = 
+                        day.getDate() === selectedDate.getDate() && 
+                        day.getMonth() === selectedDate.getMonth() && 
+                        day.getFullYear() === selectedDate.getFullYear();
+
+                    const dataFormatada = format(day, "dd/MM/yyyy");
+                    const temEvento = diasComEventos.includes(dataFormatada);
+
+                    const dayStyle = 
+                        isToday ? styles.currentDay : 
+                        isSelectedDay ? styles.selectedDay : 
+                        temEvento ? styles.eventDay : 
+                        null;
+
+                    return (
+                        <View 
+                            key={index} 
+                            style={[styles.dayContainer, dayStyle]}>
+                            <Text style={styles.dayMonth}>{day.getDate()}</Text>
+                        </View>
+                    );
+                })}
             </View>
+
+            <Pressable onPress={handleCalendarPress} style={styles.calendarIconContainer}>
+                    <Icon name="calendar" size={25} color="white" />
+            </Pressable>
+
+            {showPicker && (
+                <DateTimePicker
+                    value={selectedDate}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                />
+            )}
         </View>
     );
 }
@@ -80,8 +161,26 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     currentDay: {
-        backgroundColor: "orange",
+        backgroundColor: "orange", // cor para o dia atual
         borderRadius: 20,
         padding: 2,
+    },
+    selectedDay: {
+        backgroundColor: "red", // cor para o dia selecionado no calendário
+        borderRadius: 20,
+        padding: 2,
+    },
+    eventDay: {
+        backgroundColor: "purple", // cor para o dia com evento
+        borderRadius: 20,
+        padding: 2,
+    },
+    calendarIconContainer: {
+        width: 35,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "absolute",
+        left: 315,
+        bottom: 23,
     },
 });

@@ -1,19 +1,23 @@
 import { Image, StyleSheet, View, ScrollView } from "react-native";
-import Event from "@/components/Event/Event";
+import Event, { Evento } from "@/components/Event/Event";
 import WeekContainer from "@/components/WeekContainer/WeekContainer";
 import ButtonCreate from "@/components/ButtonCreate/ButtonCreate";
+import { useState } from "react";
 
 export default function HomeScreen() {
+
+    const [eventos, setEventos] = useState<Evento[]>([]);
+
     return (
         <View style={styles.container}>
             <View style={styles.header}></View>
 
             <View style={styles.weekContainerWrapper}>
-                <WeekContainer />
+            <WeekContainer eventos={eventos.map(evento => ({ data: evento.data || '' }))} />
             </View>
 
             <ScrollView style={styles.eventContainer}>
-                <Event />
+                <Event setEventos={setEventos}/>
             </ScrollView>
 
             <View style={styles.buttonCreateWrapper}>

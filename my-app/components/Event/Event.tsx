@@ -8,14 +8,19 @@ import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/fire
 import { useNavigation } from "@react-navigation/native";
 import CheckAll from "../CheckAll/CheckAll";
 
-interface Evento {
+export interface Evento {
     id: string;
     nome: string;
+    data: string;
     checked?: boolean;
     status?: boolean;}
 
-export default function Event() {
-    const [eventos, setEventos] = useState<Evento[]>([]);
+    interface EventProps {
+        setEventos: React.Dispatch<React.SetStateAction<Evento[]>>;
+    }
+
+export default function Event({ setEventos }: EventProps) {
+    const [eventos, setEventosLocal] = useState<Evento[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
 
@@ -25,15 +30,18 @@ export default function Event() {
                 id: doc.id,
                 ...doc.data(),
             })) as Evento[];
+            console.log(eventosList);
+            setEventosLocal(eventosList);
             setEventos(eventosList);});
 
-        return () => unsubscribe();}, []);
+        return () => unsubscribe();}, [setEventos]);
 
     const handleExcluirEvento = async (index: number) => {
         const updatedEventos = [...eventos];
         const eventIdToDelete = updatedEventos[index].id;
 
         updatedEventos.splice(index, 1);
+        setEventosLocal(updatedEventos);
         setEventos(updatedEventos);
 
         try {
@@ -48,6 +56,7 @@ export default function Event() {
         evento.checked = !evento.checked;
         evento.status = evento.checked;
 
+        setEventosLocal(updatedEventos);
         setEventos(updatedEventos);
 
         try {
@@ -71,7 +80,7 @@ export default function Event() {
 
     return (
         <View style={styles.scrollViewContent}>
-            <CheckAll eventos={eventos} setEventos={setEventos} />
+            <CheckAll eventos={eventos} setEventos={setEventosLocal} />
             {eventos.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>
