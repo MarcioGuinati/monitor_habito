@@ -15,12 +15,23 @@ export default function TabLayout() {
   return (
     <Tabs.Navigator
       screenOptions={{
-        tabBarStyle: { height: 57 },
+        tabBarStyle: {
+          height: 60,
+          backgroundColor: 'orange',
+          borderTopWidth: 0, 
+          elevation: 5, 
+          shadowColor: '#000', 
+          shadowOffset: { width: 0, height: 1 }, 
+          shadowOpacity: 0.2, 
+          shadowRadius: 2, 
+        },
         tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "white",
-        tabBarActiveBackgroundColor: "orange",
-        tabBarInactiveBackgroundColor: "orange",
-        tabBarLabelStyle: { marginBottom: 5, marginTop: -5 },
+        tabBarInactiveTintColor: "rgba(255, 255, 255, 0.6)",
+        tabBarLabelStyle: {
+          marginBottom: 5,
+          marginTop: -5,
+          fontSize: 12, // Tamanho da fonte
+        },
         headerShown: false,
       }}>
 
@@ -46,7 +57,7 @@ export default function TabLayout() {
         component={HomeScreen}
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <TabBarIcon name={"home-sharp"} color={color} />
           ),
         }}
@@ -56,7 +67,7 @@ export default function TabLayout() {
         component={TabTwoScreen}
         options={{
           title: 'Relatório',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <TabBarIcon name={"bar-chart-sharp"} color={color} />
           ),
         }}
@@ -66,7 +77,7 @@ export default function TabLayout() {
         component={ConfigScreen}
         options={{
           title: 'Configuração',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <TabBarIcon name={"cog"} color={color} />
           ),
         }}
