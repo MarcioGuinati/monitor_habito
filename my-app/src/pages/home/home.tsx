@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     eventContainer: {
         // top: 1,
         //Bug analisar
-        bottom: 50,
+        bottom: 5,
         flex: 1,
         marginTop: 155,
     },
