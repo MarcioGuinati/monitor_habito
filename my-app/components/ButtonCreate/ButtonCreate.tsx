@@ -1,5 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'; // Usando FontAwesome
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../src/firebase/config_firebase";
@@ -14,7 +15,7 @@ const ButtonCreate: React.FC = () => {
       const ids = querySnapshot.docs.map(doc => parseInt(doc.id, 10)).sort((a, b) => a - b);
 
       let newId = 1;
-      for (let i = 0; i < ids.length; i++) {
+      for (let i = 0; ids.length > i; i++) {
         if (ids[i] !== newId) {
           break;
         }
@@ -39,26 +40,27 @@ const ButtonCreate: React.FC = () => {
 
   return (
     <TouchableOpacity style={styles.button} onPress={handleNovoEventoPress}>
-      <Text style={styles.text}>CRIAR NOVO HÁBITO</Text>
+      <FontAwesome name="plus" size={30} color="white" />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 30,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: 'orange',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: 20,
-  },
-  text: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center', // Centraliza horizontalmente
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5, // Sombras em dispositivos Android
   },
 });
 

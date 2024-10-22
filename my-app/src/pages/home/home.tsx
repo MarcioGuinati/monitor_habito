@@ -46,13 +46,15 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     eventContainer: {
-        bottom: 60,
+        // top: 1,
+        //Bug analisar
+        bottom: 50,
         flex: 1,
-        marginTop: 210,
+        marginTop: 155,
     },
     buttonCreateWrapper: {
         position: "absolute",
-        bottom: -10,
+        bottom: 20,
         left: 0,
         right: 0,
         alignItems: "center",
