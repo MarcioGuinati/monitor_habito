@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
     eventContainer: {
         // top: 1,
         //Bug analisar
-        bottom: 50,
+        bottom: 60,
         flex: 1,
-        marginTop: 155,
+        marginTop: 210,
     },
     buttonCreateWrapper: {
         position: "absolute",
