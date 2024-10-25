@@ -6,9 +6,10 @@ import { format } from "date-fns";
 
 interface WeekContainerProps {
     eventos: { data: string }[];
+    onDateSelect: (date: string) => void;
 }
 
-export default function WeekContainer({ eventos }: WeekContainerProps) {
+export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [weekDays, setWeekDays] = useState<Date[]>([]);
     const [showPicker, setShowPicker] = useState(false);
@@ -35,8 +36,10 @@ export default function WeekContainer({ eventos }: WeekContainerProps) {
     };
 
     const handleDateChange = (event: any, date?: Date) => {
+        console.log("Data selecionada:", date);
         if (date) {
             setSelectedDate(date);
+            onDateSelect(format(date, "dd/MM/yyyy"));
 
             const startOfCurrentWeek = new Date(currentDate);
             startOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay());
