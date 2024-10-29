@@ -17,10 +17,10 @@ export interface Evento {
 
     interface EventProps {
         setEventos: React.Dispatch<React.SetStateAction<Evento[]>>;
+        eventos: Evento[];
     }
 
-export default function Event({ setEventos }: EventProps) {
-    const [eventos, setEventosLocal] = useState<Evento[]>([]);
+export default function Event({ setEventos, eventos }: EventProps) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
 
@@ -31,7 +31,6 @@ export default function Event({ setEventos }: EventProps) {
                 ...doc.data(),
             })) as Evento[];
             console.log(eventosList);
-            setEventosLocal(eventosList);
             setEventos(eventosList);});
 
         return () => unsubscribe();}, [setEventos]);
@@ -41,7 +40,6 @@ export default function Event({ setEventos }: EventProps) {
         const eventIdToDelete = updatedEventos[index].id;
 
         updatedEventos.splice(index, 1);
-        setEventosLocal(updatedEventos);
         setEventos(updatedEventos);
 
         try {
@@ -56,7 +54,6 @@ export default function Event({ setEventos }: EventProps) {
         evento.checked = !evento.checked;
         evento.status = evento.checked;
 
-        setEventosLocal(updatedEventos);
         setEventos(updatedEventos);
 
         try {
@@ -80,7 +77,7 @@ export default function Event({ setEventos }: EventProps) {
 
     return (
         <View style={styles.scrollViewContent}>
-            <CheckAll eventos={eventos} setEventos={setEventosLocal} />
+            <CheckAll eventos={eventos} setEventos={setEventos} />
             {eventos.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>

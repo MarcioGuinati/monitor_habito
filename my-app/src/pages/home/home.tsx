@@ -2,22 +2,32 @@ import { Image, StyleSheet, View, ScrollView } from "react-native";
 import Event, { Evento } from "@/components/Event/Event";
 import WeekContainer from "@/components/WeekContainer/WeekContainer";
 import ButtonCreate from "@/components/ButtonCreate/ButtonCreate";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { format } from "date-fns";
 
 export default function HomeScreen() {
 
     const [eventos, setEventos] = useState<Evento[]>([]);
+    const [selectedDate, setSelectedDate] = useState(format(new Date(), "dd/MM/yyyy"));
 
+    const eventosFiltrados = eventos.filter(evento => evento.data === selectedDate);
+
+    useEffect(() => {
+        console.log("Data selecionada:", selectedDate);
+        console.log("Eventos filtrados:", eventosFiltrados);
+    }, [selectedDate, eventos]);
+
+    
     return (
         <View style={styles.container}>
             <View style={styles.header}></View>
 
             <View style={styles.weekContainerWrapper}>
-            <WeekContainer eventos={eventos.map(evento => ({ data: evento.data || '' }))} />
+                <WeekContainer eventos={eventos.map(evento => ({ data: evento.data || "" }))} onDateSelect={setSelectedDate}/>
             </View>
 
             <ScrollView style={styles.eventContainer}>
-                <Event setEventos={setEventos}/>
+                <Event setEventos={setEventos} eventos={eventosFiltrados}/>
             </ScrollView>
 
             <View style={styles.buttonCreateWrapper}>

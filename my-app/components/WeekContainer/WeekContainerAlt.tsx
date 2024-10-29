@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { useState, useEffect } from "react";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { format } from "date-fns";
 
@@ -12,7 +12,7 @@ interface WeekContainerProps {
 export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [weekDays, setWeekDays] = useState<Date[]>([]);
-    const [showPicker, setShowPicker] = useState(false);
+    const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(currentDate);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
     }, [currentDate]);
 
     const handleCalendarPress = () => {
-        setShowPicker(true);
+        setShowCalendar(true);
     };
 
     const handleDateChange = (event: any, date?: Date) => {
@@ -52,7 +52,14 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
                 setCurrentDate(startOfSelectedWeek);
             }
         }
-        setShowPicker(false);
+        setShowCalendar(false);
+    };
+
+    const onDayPress = (day: { dateString: string }) => {
+        const selected = new Date(day.dateString);
+        setSelectedDate(selected);
+        onDateSelect(format(selected, "dd/MM/yyyy"));
+        setShowCalendar(false);
     };
 
     const diasComEventos = eventos.map(evento => {
@@ -107,13 +114,27 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
                     <Icon name="calendar" size={25} color="white" />
             </Pressable>
 
-            {showPicker && (
-                <DateTimePicker
-                    value={selectedDate}
-                    mode="date"
-                    display="default"
-                    onChange={handleDateChange}
-                />
+            {showCalendar  && (
+                <Calendar
+                markedDates={eventos.reduce((acc, evento) => {
+                    const [dia, mes, ano] = evento.data.split('/');
+                    const formattedDate = `${ano}-${mes}-${dia}`;
+                    acc[formattedDate] = { marked: true, dotColor: 'purple' };
+                    return acc;
+                }, {} as { [key: string]: { marked: boolean; dotColor: string } })}
+                onDayPress={onDayPress}
+                theme={{
+                    todayTextColor: 'orange',
+                    selectedDayBackgroundColor: 'red',
+                    arrowColor: 'white',
+                    monthTextColor: 'white',
+                    textDayFontFamily: 'monospace',
+                    textMonthFontFamily: 'monospace',
+                    textDayFontSize: 16,
+                    textMonthFontSize: 18,
+                }}
+                style={styles.calendar}
+            />
             )}
         </View>
     );
@@ -185,5 +206,14 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 315,
         bottom: 23,
+    },
+    calendar: {
+        position: "absolute",
+        top: 30,
+        backgroundColor: "orange",
+        borderRadius: 10,
+        width: '80%',
+        zIndex: 1,
+        right: -150,
     },
 });
