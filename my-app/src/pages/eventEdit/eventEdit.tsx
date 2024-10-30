@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { doc, getDoc, setDoc, } from "firebase/firestore";
-import { db } from "../../firebase/config_firebase";
+import { db, auth } from "../../firebase/config_firebase";
 import CurrentDate from "@/components/Date/CurrentDate";
 import CurrentTime from "@/components/Hour/CurrentTime";
 import Edit from "react-native-vector-icons/FontAwesome";
@@ -158,7 +158,11 @@ export default function EventEdit() {
             </View>
 
             <View style={styles.saveBackButtonsBox}>
-                <ButtonSave onPress={handleButtonSavePress} />
+            <ButtonSave 
+                userEmail={auth.currentUser?.email ?? null} 
+                eventId={eventId} 
+                eventData={{ nome: eventTitle, notas: eventNotes }} 
+                onPress={handleButtonSavePress} />
                 <ButtonBack onPress={handleButtonBackPress} />
             </View>
         </View>

@@ -4,6 +4,8 @@ import WeekContainer from "@/components/WeekContainer/WeekContainer";
 import ButtonCreate from "@/components/ButtonCreate/ButtonCreate";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { auth, db } from '@/src/firebase/config_firebase';
+import { collection, getDocs, onSnapshot  } from 'firebase/firestore';
 
 export default function HomeScreen() {
 
@@ -13,11 +15,42 @@ export default function HomeScreen() {
     const eventosFiltrados = eventos.filter(evento => evento.data === selectedDate);
 
     useEffect(() => {
+        const user = auth.currentUser;
+        if (user) {
+            console.log("Usuário logado:", user.email);
+        } else {
+            console.error("Nenhum usuário logado.");
+        }
+    }, []);
+
+    useEffect(() => {
+        const user = auth.currentUser;
+        const userCollectionRef = user && user.email ? collection(db, user.email) : null;
+
+        if (userCollectionRef) {
+            const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
+                const userEvents: Evento[] = snapshot.docs.map(doc => {
+                    const data = doc.data() as Evento;
+                    return {
+                        ...data,
+                        id: doc.id,
+                    };
+                });
+
+                setEventos(userEvents);
+            });
+
+            return () => unsubscribe();
+        } else {
+            console.warn("Usuário não autenticado. Redirecionar para a tela de login.");
+        }
+    }, []);
+
+    useEffect(() => {
         console.log("Data selecionada:", selectedDate);
         console.log("Eventos filtrados:", eventosFiltrados);
     }, [selectedDate, eventos]);
 
-    
     return (
         <View style={styles.container}>
             <View style={styles.header}></View>
@@ -31,7 +64,7 @@ export default function HomeScreen() {
             </ScrollView>
 
             <View style={styles.buttonCreateWrapper}>
-                <ButtonCreate />
+                <ButtonCreate userEmail={auth.currentUser?.email ?? null} />
             </View>
         </View>
     );

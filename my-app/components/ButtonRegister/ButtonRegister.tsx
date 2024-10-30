@@ -3,6 +3,8 @@ import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ActivityIndi
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/firebase/config_firebase';
+import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
+import { db } from '@/src/firebase/config_firebase';
 
 interface ButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
@@ -17,16 +19,33 @@ const ButtonRegister: React.FC<ButtonProps> = ({ onPress, email, password }) => 
   const handleRegister = async () => {
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user.email) {
+        const userCollectionRef = collection(db, user.email);
+        const userDocs = await getDocs(userCollectionRef);
+
+        if (userDocs.empty) {
+          await setDoc(doc(userCollectionRef), { /* Dados iniciais */ });
+          console.log("Coleção criada com sucesso.");
+        } else {
+          console.log("Coleção já existe, pulando criação.");
+        }
+      } else {
+        throw new Error("Erro ao obter o email do usuário.");
+      }
+
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
-      navigation.navigate("login"); // Navega para a tela de login após registro bem-sucedido
+      navigation.navigate("login");
     } catch (error) {
-      // Captura o erro e exibe a mensagem correspondente
-      const errorMessage = error.code === 'auth/invalid-email' 
-        ? "Email inválido. Verifique e tente novamente." 
-        : error.code === 'auth/weak-password' 
-          ? "A senha deve ter pelo menos 6 caracteres." 
-          : "Falha ao cadastrar usuário. Verifique os dados e tente novamente.";
+      const errorMessage = error.code === 'auth/email-already-in-use'
+        ? "Este e-mail já está em uso. Tente outro."
+        : error.code === 'auth/invalid-email'
+        ? "Email inválido. Verifique e tente novamente."
+        : error.code === 'auth/weak-password'
+        ? "A senha deve ter pelo menos 6 caracteres."
+        : "Falha ao cadastrar usuário. Verifique os dados e tente novamente.";
       Alert.alert("Erro", errorMessage);
     } finally {
       setLoading(false);

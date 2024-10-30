@@ -3,6 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ActivityIndicator, Alert } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/firebase/config_firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/src/firebase/config_firebase';
 
 interface ButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
@@ -18,6 +20,15 @@ const ButtonLogin: React.FC<ButtonProps> = ({ onPress, email, password }) => {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      const userCollectionRef = collection(db, email);
+      const userDocs = await getDocs(userCollectionRef);
+      
+      if (!userDocs.empty) {
+        console.log("Documentos do usuário:", userDocs.docs.map(doc => doc.data()));
+      } else {
+        console.log("Nenhum dado encontrado para o usuário.");
+      }
+
       navigation.navigate("home");
     } catch (error) {
       Alert.alert("Erro", "E-mail ou senha incorretos. Tente novamente.");
