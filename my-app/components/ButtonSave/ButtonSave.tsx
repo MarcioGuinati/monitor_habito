@@ -12,22 +12,24 @@ interface ButtonProps {
 
 const ButtonSave: React.FC<ButtonProps> = ({ onPress, userEmail, eventId, eventData }) => {
   const handleSave = async () => {
-    const user = auth.currentUser;
-
-    if (!user || !user.email) {
-      console.error("Usuário não autenticado.");
-      return;
-    }
-
     try {
+      const user = auth.currentUser;
+      if (!user || !user.email) {
+        console.error("Usuário não autenticado.");
+        return;
+      }
+
       const eventRef = doc(db, user.email, eventId);
+      console.log("Dados do evento a serem salvos:", eventData);
+
       await setDoc(eventRef, eventData);
+
       console.log("Evento salvo com sucesso.");
       const fakeEvent = { nativeEvent: {} } as GestureResponderEvent;
-        if (onPress) onPress(fakeEvent);
-      } catch (error) {
-        console.error("Erro ao salvar o evento:", error);
-      }
+      if (onPress) onPress(fakeEvent);
+    } catch (error) {
+      console.error("Erro ao salvar o evento:", error);
+    }
   };
 
   return (
