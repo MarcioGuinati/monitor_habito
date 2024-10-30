@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {Image, StyleSheet, Platform, View, Text, Pressable,} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import PasswordBox from "@/components/PasswordBox/PasswordBox";
@@ -6,6 +7,8 @@ import ButtonLogin from "@/components/ButtonLogin/ButtonLogin";
 
 export default function LoginScreen() {
     const navigation = useNavigation();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleRegisterPress = () => {
         navigation.navigate("register");
@@ -27,14 +30,14 @@ export default function LoginScreen() {
 
             <View style={styles.box}>
                 <View style={styles.stepContainerEmail}>
-                    <InputEmail />
+                    <InputEmail value={email} onChangeText={setEmail} />
                 </View>
                 <View style={styles.stepContainerPassword}>
-                    <PasswordBox />
+                    <PasswordBox value={password} onChangeText={setPassword} />
                 </View>
                 <Text style={styles.linkForgot} onPress={handleRecoverPasswordPress} >Esqueceu sua senha?</Text>
                 <View style={styles.stepButtonContainer}>
-                    <ButtonLogin />
+                    <ButtonLogin email={email} password={password} />
                 </View>
             </View>
 

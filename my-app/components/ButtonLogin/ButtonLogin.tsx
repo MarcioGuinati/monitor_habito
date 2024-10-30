@@ -1,21 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
-import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ActivityIndicator, Alert } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/src/firebase/config_firebase';
 
 interface ButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
+  email: string;
+  password: string;
 }
 
-const ButtonLogin: React.FC<ButtonProps> = ({ onPress }) => {
+const ButtonLogin: React.FC<ButtonProps> = ({ onPress, email, password }) => {
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
-    const handleHomePress = () => {
-        navigation.navigate("home");
-    };
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate("home");
+    } catch (error) {
+      Alert.alert("Erro", "E-mail ou senha incorretos. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <TouchableOpacity style={styles.button} onPress={handleHomePress}>
-      <Text style={styles.text}>Entrar</Text>
+    <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+      {loading ? (
+        <ActivityIndicator size="small" color="#FFF" />
+      ) : (
+        <Text style={styles.text}>Entrar</Text>
+      )}
     </TouchableOpacity>
   );
 };
