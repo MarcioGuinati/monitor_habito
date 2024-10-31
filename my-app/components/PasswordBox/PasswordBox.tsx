@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-function PasswordBox () {
+interface PasswordBoxProps {
+    value: string;
+    onChangeText: (text: string) => void;
+}
+
+const PasswordBox: React.FC<PasswordBoxProps> = ({ value, onChangeText }) => {
 
     const [password, setPassword] = useState("");
     const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -17,8 +22,8 @@ function PasswordBox () {
             <TextInput 
             style={styles.input}
             secureTextEntry={!isPasswordVisible}
-            value={password}
-            onChangeText={setPassword}
+            value={value}
+            onChangeText={onChangeText}
             placeholder="Senha"
             
             />

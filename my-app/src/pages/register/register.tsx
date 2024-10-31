@@ -3,10 +3,12 @@ import { useNavigation } from '@react-navigation/native';
 import PasswordBox from "@/components/PasswordBox/PasswordBox";
 import InputEmail from "@/components/InputEmail/InputEmail";
 import ButtonRegister from "@/components/ButtonRegister/ButtonRegister";
-
+import { useState } from "react";
 
 export default function Register() {
     const navigation = useNavigation(); // Inicialize o hook de navegação
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleLoginPress = () => {
       navigation.navigate('login'); // Navegue para a tela "Register"
@@ -23,13 +25,13 @@ export default function Register() {
             </View>
             <View style={styles.box}>
                 <View style={styles.stepContainer}>
-                    <InputEmail />
+                    <InputEmail value={email} onChangeText={setEmail} />
                 </View>
                 <View style={styles.stepContainer}>
-                    <PasswordBox />
+                    <PasswordBox value={password} onChangeText={setPassword} />
                 </View>
                 <View style={styles.stepButtonContainer}>
-                    <ButtonRegister />
+                    <ButtonRegister email={email} password={password} />
                 </View>
             </View>
             <Text style={styles.linktext}>Já tem uma conta? <Text style={styles.link} onPress={handleLoginPress}>Login</Text></Text>

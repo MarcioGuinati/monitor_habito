@@ -5,13 +5,19 @@ import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../src/firebase/config_firebase";
 
-const ButtonCreate: React.FC = () => {
+interface ButtonCreateProps {
+  userEmail: string | null;
+}
+
+const ButtonCreate: React.FC<ButtonCreateProps> = ({ userEmail }) => {
   const navigation = useNavigation();
 
   const findNextAvailableId = async () => {
+    if (!userEmail) throw new Error("Usuário não autenticado.");
+
     try {
-      const eventosCollection = collection(db, "eventos");
-      const querySnapshot = await getDocs(eventosCollection);
+      const userCollection = collection(db, userEmail);
+      const querySnapshot = await getDocs(userCollection);
       const ids = querySnapshot.docs.map(doc => parseInt(doc.id, 10)).sort((a, b) => a - b);
 
       let newId = 1;
@@ -32,7 +38,7 @@ const ButtonCreate: React.FC = () => {
   const handleNovoEventoPress = async () => {
     try {
       const nextId = await findNextAvailableId();
-      navigation.navigate("eventEdit", { eventId: nextId, isNewEvent: true });
+      navigation.navigate("eventEdit", { eventId: nextId, isNewEvent: true, userEmail });
     } catch (error) {
       console.error("Erro ao gerar novo ID para evento:", error);
     }

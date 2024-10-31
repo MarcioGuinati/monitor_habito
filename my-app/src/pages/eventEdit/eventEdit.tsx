@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { doc, getDoc, setDoc, } from "firebase/firestore";
-import { db } from "../../firebase/config_firebase";
+import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
+import { db, auth } from "../../firebase/config_firebase";
+import { FirebaseApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import CurrentDate from "@/components/Date/CurrentDate";
 import CurrentTime from "@/components/Hour/CurrentTime";
 import Edit from "react-native-vector-icons/FontAwesome";
@@ -107,19 +109,27 @@ export default function EventEdit() {
 
                 const eventoData = {
                     id: currentEventId,
-                    nome: eventTitle,
-                    notas: eventNotes,
+                    nome: eventTitle || "Título do Evento",
+                    notas: eventNotes || "",
                     data: selectedDate ? selectedDate.toLocaleDateString() : null,
                     hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
                     status: false,};
-        
-                const docRef = doc(db, "eventos", currentEventId);
+
+                console.log("Dados do evento a serem salvos:", eventoData);
+
+            const user = auth.currentUser;  // Verifica usuário autenticado
+            if (user && user.email) {
+            const docRef = doc(db, user.email, currentEventId);  // Usa email como nome da coleção
                 await setDoc(docRef, eventoData);
-        
-                console.log(`Evento com ID ${currentEventId} salvo no Firestore.`);
+                console.log(`Evento salvo na coleção ${user.email} com ID ${currentEventId}`);
                 navigation.navigate("home");
-                } catch (error) {
-                    console.error("Erro ao salvar o evento no Firestore:", error);}};
+            } else {
+                console.error("Erro: Usuário não autenticado.");
+            }
+            } catch (error) {
+                console.error("Erro ao salvar o evento no Firestore:", error);
+            }
+        };
 
     return (
         <View style={styles.container}>
@@ -158,7 +168,11 @@ export default function EventEdit() {
             </View>
 
             <View style={styles.saveBackButtonsBox}>
-                <ButtonSave onPress={handleButtonSavePress} />
+            <ButtonSave 
+                userEmail={auth.currentUser?.email ?? null} 
+                eventId={eventId} 
+                eventData={{ nome: eventTitle, notas: eventNotes }} 
+                onPress={handleButtonSavePress} />
                 <ButtonBack onPress={handleButtonBackPress} />
             </View>
         </View>

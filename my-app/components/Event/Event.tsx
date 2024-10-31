@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Modal, TouchableOpacity} from "react
 import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
-import { db } from "../../src/firebase/config_firebase";
+import { db, auth } from "../../src/firebase/config_firebase";
 import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import CheckAll from "../CheckAll/CheckAll";
@@ -12,6 +12,7 @@ export interface Evento {
     id: string;
     nome: string;
     data: string;
+    hora: string;
     checked?: boolean;
     status?: boolean;}
 
@@ -23,19 +24,22 @@ export interface Evento {
 export default function Event({ setEventos, eventos }: EventProps) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
+    const userId = auth.currentUser?.email ?? null;
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, "eventos"), (snapshot) => {
+        if (!userId) return;
+
+        const unsubscribe = onSnapshot(collection(db, userId), (snapshot) => {
             const eventosList: Evento[] = snapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             })) as Evento[];
-            console.log(eventosList);
             setEventos(eventosList);});
 
-        return () => unsubscribe();}, [setEventos]);
+        return () => unsubscribe();}, [setEventos, userId]);
 
     const handleExcluirEvento = async (index: number) => {
+        if (!userId) return; // Verifica se userId é válido
         const updatedEventos = [...eventos];
         const eventIdToDelete = updatedEventos[index].id;
 
@@ -43,12 +47,13 @@ export default function Event({ setEventos, eventos }: EventProps) {
         setEventos(updatedEventos);
 
         try {
-            await deleteDoc(doc(db, "eventos", eventIdToDelete));
+            await deleteDoc(doc(db, userId, eventIdToDelete));
             console.log(`Evento com ID ${eventIdToDelete} excluído do Firestore.`);
         } catch (error) {
             console.error("Erro ao excluir o evento do Firestore:", error);}};
 
     const handleCheckboxToggle = async (index: number) => {
+        if (!userId) return; // Verifica se userId é válido
         const updatedEventos = [...eventos];
         const evento = updatedEventos[index];
         evento.checked = !evento.checked;
@@ -57,7 +62,7 @@ export default function Event({ setEventos, eventos }: EventProps) {
         setEventos(updatedEventos);
 
         try {
-            await updateDoc(doc(db, "eventos", evento.id), { 
+            await updateDoc(doc(db, userId, evento.id), { 
                 checked: evento.checked, 
                 status: evento.status});
             console.log(`Status do evento com ID ${evento.id} atualizado no Firestore.`);
