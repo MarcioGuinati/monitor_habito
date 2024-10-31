@@ -17,14 +17,21 @@ const ButtonLogin: React.FC<ButtonProps> = ({ onPress, email, password }) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (loading) {
+      console.log("Login já em andamento, ignorando clique.");
+      return;
+    }
+
+    console.log("handleLogin foi chamado");
     setLoading(true);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       const userCollectionRef = collection(db, email);
       const userDocs = await getDocs(userCollectionRef);
       
       if (!userDocs.empty) {
-        console.log("Documentos do usuário:", userDocs.docs.map(doc => doc.data()));
+        console.log("Eventos Completos do Usuário:", userDocs.docs.map(doc => doc.data()));
       } else {
         console.log("Nenhum dado encontrado para o usuário.");
       }

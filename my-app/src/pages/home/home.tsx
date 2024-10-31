@@ -38,18 +38,17 @@ export default function HomeScreen() {
                 });
 
                 setEventos(userEvents);
+
+                const eventosFiltrados = userEvents.filter(evento => evento.data === selectedDate);
+                if (eventosFiltrados.length > 0) {
+                    console.log("Eventos Sendo Exibidos de Acordo com Dia Selecionado:", eventosFiltrados);}
             });
 
             return () => unsubscribe();
         } else {
             console.warn("Usuário não autenticado. Redirecionar para a tela de login.");
         }
-    }, []);
-
-    useEffect(() => {
-        console.log("Data selecionada:", selectedDate);
-        console.log("Eventos filtrados:", eventosFiltrados);
-    }, [selectedDate, eventos]);
+    }, [selectedDate]);
 
     return (
         <View style={styles.container}>

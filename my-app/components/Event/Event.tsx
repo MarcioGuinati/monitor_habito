@@ -34,7 +34,6 @@ export default function Event({ setEventos, eventos }: EventProps) {
                 id: doc.id,
                 ...doc.data(),
             })) as Evento[];
-            console.log(eventosList);
             setEventos(eventosList);});
 
         return () => unsubscribe();}, [setEventos, userId]);

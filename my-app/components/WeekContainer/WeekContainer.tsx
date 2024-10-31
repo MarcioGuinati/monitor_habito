@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { format } from "date-fns";
@@ -14,6 +14,8 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
     const [weekDays, setWeekDays] = useState<Date[]>([]);
     const [showPicker, setShowPicker] = useState(false);
     const [selectedDate, setSelectedDate] = useState(currentDate);
+    const [diasComEventos, setDiasComEventos] = useState<string[]>([]);
+    const eventosRef = useRef<string[]>([]); // Referência para evitar logs duplicados
 
     useEffect(() => {
         const updateWeekDays = (date: Date) => {
@@ -36,8 +38,8 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
     };
 
     const handleDateChange = (event: any, date?: Date) => {
-        console.log("Data selecionada:", date);
         if (date) {
+            console.log("Data Selecionada no Calendário:", format(date, "dd/MM/yyyy"));
             setSelectedDate(date);
             onDateSelect(format(date, "dd/MM/yyyy"));
 
@@ -55,15 +57,26 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
         setShowPicker(false);
     };
 
-    const diasComEventos = eventos.map(evento => {
-        const [dia, mes, ano] = evento.data.split('/');
-        const formattedDate = new Date(`${ano}-${mes}-${dia}`);
-        return formattedDate instanceof Date && !isNaN(formattedDate.getTime()) 
-            ? format(formattedDate, "dd/MM/yyyy") 
-            : null;
-    }).filter(Boolean);
-    console.log('Eventos:', eventos);
-    console.log('Dias com eventos formatados:', diasComEventos);
+    useEffect(() => {
+        if (eventos && eventos.length > 0) {
+            const diasComEventos = eventos.map((evento) => {
+                if (evento.data) {
+                const [dia, mes, ano] = evento.data.split("/");
+                const formattedDate = new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`);
+                return !isNaN(formattedDate.getTime())
+                    ? format(formattedDate, "dd/MM/yyyy")
+                    : null;
+                }
+                return null;
+            })
+            .filter(Boolean) as string[];
+
+        if (JSON.stringify(diasComEventos) !== JSON.stringify(eventosRef.current)) {
+            setDiasComEventos(diasComEventos);
+            eventosRef.current = diasComEventos;
+            console.log("Datas de Todos os Eventos do Usuário:", eventos);
+            console.log("Datas dos Eventos Formatadas:", diasComEventos);
+        }}}, [eventos]);
 
     return (
         <View style={styles.Container}>
