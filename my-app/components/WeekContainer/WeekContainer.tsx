@@ -62,7 +62,7 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
             const diasComEventos = eventos.map((evento) => {
                 if (evento.data) {
                 const [dia, mes, ano] = evento.data.split("/");
-                const formattedDate = new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`);
+                const formattedDate = new Date(`${ano}-${mes}-${dia}`);
                 return !isNaN(formattedDate.getTime())
                     ? format(formattedDate, "dd/MM/yyyy")
                     : null;
