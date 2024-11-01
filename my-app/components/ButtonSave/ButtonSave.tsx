@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, Alert } from 'react-native';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from "../../src/firebase/config_firebase";
 
@@ -12,6 +12,11 @@ interface ButtonProps {
 
 const ButtonSave: React.FC<ButtonProps> = ({ onPress, userEmail, eventId, eventData }) => {
   const handleSave = async () => {
+    if (!eventData.data || !eventData.hora) {
+      Alert.alert("Data e Hora Necessárias", "Por favor, defina a data e a hora antes de salvar o evento.");
+      return;
+    }
+
     try {
       const user = auth.currentUser;
       if (!user || !user.email) {
