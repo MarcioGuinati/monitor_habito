@@ -19,6 +19,15 @@ export default function EventEdit() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState(new Date());
 
+    // Log quando selectedDate é atualizado
+    useEffect(() => {
+        console.log("Data selecionada:", selectedDate);
+    }, [selectedDate]);
+
+    // Log quando selectedTime é atualizado
+    useEffect(() => {
+        console.log("Hora selecionada:", selectedTime);
+    }, [selectedTime]);
 
     const navigation = useNavigation();
     const route = useRoute();
@@ -171,7 +180,10 @@ export default function EventEdit() {
             <ButtonSave 
                 userEmail={auth.currentUser?.email ?? null} 
                 eventId={eventId} 
-                eventData={{ nome: eventTitle, notas: eventNotes }} 
+                eventData={{ 
+                    nome: eventTitle, notas: eventNotes,
+                    data: selectedDate ? selectedDate.toLocaleDateString() : null,
+                    hora: selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}}
                 onPress={handleButtonSavePress} />
                 <ButtonBack onPress={handleButtonBackPress} />
             </View>
