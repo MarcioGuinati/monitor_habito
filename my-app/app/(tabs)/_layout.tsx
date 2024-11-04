@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import HomeScreen from '@/src/pages/home/home';
@@ -8,10 +8,13 @@ import LoginScreen from '@/src/pages/login/login';
 import Register from '@/src/pages/register/register';
 import RecoverPassword from '@/src/pages/recoverPassword/recoverPassword';
 import EventEdit from '@/src/pages/eventEdit/eventEdit';
+import { AuthProvider, AuthContext } from '@/src/context/AuthContext';
 
 const Tabs = createBottomTabNavigator();
 
-export default function TabLayout() {
+function TabLayout() {
+  const { isLoggedIn } = useContext(AuthContext);
+
   return (
     <Tabs.Navigator
       screenOptions={{
@@ -52,6 +55,8 @@ export default function TabLayout() {
         component={EventEdit}
         options={{tabBarButton: () => null}} />
 
+      {isLoggedIn && (
+        <>
       <Tabs.Screen
         name="home"
         component={HomeScreen}
@@ -82,6 +87,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      </>)}
     </Tabs.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <TabLayout />
+    </AuthProvider>
   );
 }
