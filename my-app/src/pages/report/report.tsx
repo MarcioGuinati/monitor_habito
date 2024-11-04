@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { PieChart } from "react-native-chart-kit";
-import { db } from "../../firebase/config_firebase";
+import { db, auth } from "../../firebase/config_firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 
 export default function PixChart() {
@@ -9,25 +9,33 @@ export default function PixChart() {
   const [failedCount, setFailedCount] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "eventos"), (snapshot) => {
-      let approved = 0;
-      let failed = 0;
+    const user = auth.currentUser;
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.status === true) {
-          approved += 1;
-        } else if (data.status === false) {
-          failed += 1;
-        }
+    if (user && user.email) {
+      const userCollectionRef = collection(db, user.email);
+
+      const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
+        let approved = 0;
+        let failed = 0;
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.status === true) {
+            approved += 1;
+          } else if (data.status === false) {
+            failed += 1;
+          }
+        });
+
+        setApprovedCount(approved);
+        setFailedCount(failed);
       });
 
-      setApprovedCount(approved);
-      setFailedCount(failed);
-    });
-
-    // Limpar a assinatura ao desmontar o componente
-    return () => unsubscribe();
+      // Limpar a assinatura ao desmontar o componente
+      return () => unsubscribe();
+    } else {
+      console.warn("Usuário não autenticado.");
+    }
   }, []);
 
   const screenWidth = Dimensions.get("window").width;
@@ -47,7 +55,6 @@ export default function PixChart() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}></Text>
       </View>
@@ -58,7 +65,6 @@ export default function PixChart() {
           Percentual de hábitos realizados e não realizados ao longo do uso
         </Text>
 
-        {/* Container com fundo diferente para o gráfico */}
         <View style={[styles.chartContainer, { width: screenWidth * 0.9 }]}>
           <PieChart
             data={pieChartData}
@@ -73,11 +79,10 @@ export default function PixChart() {
             backgroundColor="transparent"
             paddingLeft="15"
             absolute
-            hasLegend={false} // Desativa a legenda embutida
+            hasLegend={false}
           />
         </View>
 
-        {/* Legenda personalizada */}
         <View style={styles.legendContainer}>
           {pieChartData.map((item, index) => (
             <View key={index} style={styles.legendItem}>
