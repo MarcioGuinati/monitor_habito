@@ -8,6 +8,8 @@ import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/fire
 import { useNavigation } from "@react-navigation/native";
 import CheckAll from "../CheckAll/CheckAll";
 import SeeAll from "../SeeAll/SeeAll";
+import ShowCompleted from "../ShowCompleted/ShowCompleted";
+import ShowNotCompleted from "../ShowNotCompleted/ShowNotCompleted";
 
 export interface Evento {
     id: string;
@@ -27,6 +29,8 @@ export default function Event({ setEventos, eventos, selectedDate }: EventProps)
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
     const [showAll, setShowAll] = useState(false); // Novo estado para controlar a exibição de todos os eventos
+    const [showCompleted, setShowCompleted] = useState(false);
+    const [showNotCompleted, setShowNotCompleted] = useState(false);
     const userId = auth.currentUser?.email ?? null;
 
     useEffect(() => {
@@ -83,16 +87,33 @@ export default function Event({ setEventos, eventos, selectedDate }: EventProps)
                 date: evento.data, 
                 time: evento.hora});}};
 
-                const handleToggleSeeAll = (showAll: boolean) => {
-                    setShowAll(showAll);
-                };
+    const handleToggleSeeAll = (showAll: boolean) => {
+        setShowAll(showAll);
+    };
 
-                const eventosToDisplay = showAll ? eventos : eventos.filter(evento => evento.data === selectedDate);
+    const handleToggleShowCompleted = (show: boolean) => {
+        setShowCompleted(show);
+        if (show) setShowNotCompleted(false);
+    };
+
+    const handleToggleShowNotCompleted = (show: boolean) => {
+        setShowNotCompleted(show);
+        if (show) setShowCompleted(false);
+    };
+
+    const eventosToDisplay = eventos.filter(evento => {
+        if (showAll) return true;
+        if (showCompleted) return evento.status === true;
+        if (showNotCompleted) return evento.status === false;
+        return evento.data === selectedDate;
+    });
 
     return (
         <View style={styles.scrollViewContent}>
             <CheckAll eventos={eventos} setEventos={setEventos} />
             <SeeAll eventos={eventos} setEventos={setEventos} onToggleSeeAll={handleToggleSeeAll} />
+            <ShowCompleted eventos={eventos} setEventos={setEventos} onToggleShowCompleted={handleToggleShowCompleted} />
+            <ShowNotCompleted eventos={eventos} setEventos={setEventos} onToggleShowNotCompleted={handleToggleShowNotCompleted} />
             {eventosToDisplay.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { writeBatch, doc } from "firebase/firestore";
-import { db } from "../../src/firebase/config_firebase";
+import { db, auth } from "../../src/firebase/config_firebase";
 
 interface CheckAllProps {
     eventos: Evento[];
@@ -11,6 +11,7 @@ interface CheckAllProps {
 
 const CheckAll: React.FC<CheckAllProps> = ({ eventos, setEventos }) => {
     const [checked, setChecked] = useState(false);
+    const userId = auth.currentUser?.email ?? null;
 
     useEffect(() => {
         const allChecked = eventos.every((evento) => evento.checked === true);
@@ -18,6 +19,8 @@ const CheckAll: React.FC<CheckAllProps> = ({ eventos, setEventos }) => {
     }, [eventos]);
 
     const handleToggleAll = async () => {
+        if (!userId) return; // Verifica se userId é válido
+
         const newCheckedStatus = !checked;
         setChecked(newCheckedStatus);
 
@@ -33,7 +36,7 @@ const CheckAll: React.FC<CheckAllProps> = ({ eventos, setEventos }) => {
             const batch = writeBatch(db);
 
             updatedEventos.forEach(evento => {
-                const eventoRef = doc(db, "eventos", evento.id);
+                const eventoRef = doc(db, userId, evento.id); // Adiciona userId ao caminho
                 batch.update(eventoRef, {
                     checked: evento.checked,
                     status: evento.status,
