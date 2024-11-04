@@ -1,31 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { CheckBox } from "react-native-elements";
 
 interface SeeAllProps {
-    showAllEvents: boolean;
-    setShowAllEvents: (showAll: boolean) => void;
+    eventos: Evento[];
+    setEventos: (eventos: Evento[]) => void;
+    onToggleSeeAll: (showAll: boolean) => void;
 }
 
-const SeeAll: React.FC<SeeAllProps> = ({ showAllEvents, setShowAllEvents }) => {
-    const handleToggleSeeAll = () => {
-        setShowAllEvents(!showAllEvents);
+const SeeAll: React.FC<SeeAllProps> = ({ eventos, setEventos, onToggleSeeAll }) => {
+    const [checked, setChecked] = useState(false);
+
+    useEffect(() => {
+        onToggleSeeAll(checked);
+    }, [checked, onToggleSeeAll]);
+
+    const handleToggleAll = () => {
+        setChecked(!checked);
     };
 
     return (
-        <View style={styles.seeAllContainer}>
+        <View style={styles.checkAllContainer}>
             <CheckBox
-                checked={showAllEvents}
-                onPress={handleToggleSeeAll}
+                checked={checked}
+                onPress={handleToggleAll}
                 containerStyle={styles.checkbox}
             />
-            <Text style={styles.label}>Visualizar Todos</Text>
+            <Text style={styles.label}>Ver Todos os Eventos</Text>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    seeAllContainer: {
+    checkAllContainer: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
@@ -38,11 +45,13 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         width: "100%",
-        marginTop: 10,
+        marginTop: 1,
+        marginBottom: 10,
         height: 50,
     },
     checkbox: {
         marginRight: 10,
+        alignSelf: "flex-end",
         padding: 0,
     },
     label: {

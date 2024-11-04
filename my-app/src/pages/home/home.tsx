@@ -12,8 +12,6 @@ export default function HomeScreen() {
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [selectedDate, setSelectedDate] = useState(format(new Date(), "dd/MM/yyyy"));
 
-    const eventosFiltrados = eventos.filter(evento => evento.data === selectedDate);
-
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
@@ -38,17 +36,13 @@ export default function HomeScreen() {
                 });
 
                 setEventos(userEvents);
-
-                const eventosFiltrados = userEvents.filter(evento => evento.data === selectedDate);
-                if (eventosFiltrados.length > 0) {
-                    console.log("Eventos Sendo Exibidos de Acordo com Dia Selecionado:", eventosFiltrados);}
             });
 
             return () => unsubscribe();
         } else {
             console.warn("Usuário não autenticado. Redirecionar para a tela de login.");
         }
-    }, [selectedDate]);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -59,7 +53,7 @@ export default function HomeScreen() {
             </View>
 
             <ScrollView style={styles.eventContainer}>
-                <Event setEventos={setEventos} eventos={eventosFiltrados}/>
+                <Event setEventos={setEventos} eventos={eventos} selectedDate={selectedDate} />
             </ScrollView>
 
             <View style={styles.buttonCreateWrapper}>

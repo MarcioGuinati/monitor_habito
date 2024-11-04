@@ -7,6 +7,7 @@ import { db, auth } from "../../src/firebase/config_firebase";
 import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import CheckAll from "../CheckAll/CheckAll";
+import SeeAll from "../SeeAll/SeeAll";
 
 export interface Evento {
     id: string;
@@ -19,11 +20,13 @@ export interface Evento {
     interface EventProps {
         setEventos: React.Dispatch<React.SetStateAction<Evento[]>>;
         eventos: Evento[];
+        selectedDate: string; // Adicione este prop
     }
 
-export default function Event({ setEventos, eventos }: EventProps) {
+export default function Event({ setEventos, eventos, selectedDate }: EventProps) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [eventToDeleteIndex, setEventToDeleteIndex] = useState<number | null>(null);
+    const [showAll, setShowAll] = useState(false); // Novo estado para controlar a exibição de todos os eventos
     const userId = auth.currentUser?.email ?? null;
 
     useEffect(() => {
@@ -80,10 +83,17 @@ export default function Event({ setEventos, eventos }: EventProps) {
                 date: evento.data, 
                 time: evento.hora});}};
 
+                const handleToggleSeeAll = (showAll: boolean) => {
+                    setShowAll(showAll);
+                };
+
+                const eventosToDisplay = showAll ? eventos : eventos.filter(evento => evento.data === selectedDate);
+
     return (
         <View style={styles.scrollViewContent}>
             <CheckAll eventos={eventos} setEventos={setEventos} />
-            {eventos.map((evento, index) => (
+            <SeeAll eventos={eventos} setEventos={setEventos} onToggleSeeAll={handleToggleSeeAll} />
+            {eventosToDisplay.map((evento, index) => (
                 <View key={index} style={styles.containerEvento}>
                     <View style={styles.backgroundNumeroOrdem}>
                         <Text style={styles.numeroOrdem}>{evento.id}</Text>
