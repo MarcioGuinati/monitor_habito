@@ -1,6 +1,6 @@
 import { Image, StyleSheet, View, ScrollView } from "react-native";
 import Event, { Evento } from "@/components/Event/Event";
-import WeekContainer from "@/components/WeekContainer/WeekContainer";
+import WeekContainer from "@/components/WeekContainer/WeekContainerAlt";
 import ButtonCreate from "@/components/ButtonCreate/ButtonCreate";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";

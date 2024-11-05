@@ -15,21 +15,27 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(currentDate);
 
-    useEffect(() => {
-        const updateWeekDays = (date: Date) => {
-            const startOfWeek = new Date(date);
-            startOfWeek.setDate(date.getDate() - date.getDay());
-            const days: Date[] = [];
-            for (let i = 0; i < 7; i++) {
-                const day = new Date(startOfWeek);
-                day.setDate(startOfWeek.getDate() + i);
-                days.push(day);
-            }
-            setWeekDays(days);
-        };
+    const updateWeekDays = (date: Date) => {
+        const startOfWeek = new Date(date);
+        startOfWeek.setDate(date.getDate() - date.getDay());
+        const days: Date[] = [];
+        for (let i = 0; i < 7; i++) {
+            const day = new Date(startOfWeek);
+            day.setDate(startOfWeek.getDate() + i);
+            days.push(day);
+        }
+        setWeekDays(days);
+    };
 
+    useEffect(() => {
+        // Atualiza os dias da semana sempre que currentDate mudar
         updateWeekDays(currentDate);
     }, [currentDate]);
+
+    useEffect(() => {
+        // Atualiza os dias da semana sempre que selectedDate mudar
+        updateWeekDays(selectedDate);
+    }, [selectedDate]);
 
     const handleCalendarPress = () => {
         setShowCalendar(true);
@@ -56,15 +62,17 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
     };
 
     const onDayPress = (day: { dateString: string }) => {
-        const selected = new Date(day.dateString);
+        const [year, month, dayOfMonth] = day.dateString.split('-').map(Number);
+        const selected = new Date(year, month - 1, dayOfMonth, 12); // Define a hora para meio-dia
         setSelectedDate(selected);
         onDateSelect(format(selected, "dd/MM/yyyy"));
+        setCurrentDate(selected);
         setShowCalendar(false);
     };
 
     const diasComEventos = eventos.map(evento => {
         const [dia, mes, ano] = evento.data.split('/');
-        const formattedDate = new Date(`${ano}-${mes}-${dia}`);
+        const formattedDate = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
         return formattedDate instanceof Date && !isNaN(formattedDate.getTime()) 
             ? format(formattedDate, "dd/MM/yyyy") 
             : null;
@@ -209,8 +217,10 @@ const styles = StyleSheet.create({
     },
     calendar: {
         position: "absolute",
-        top: 30,
+        top: 20,
+        paddingBottom : 10,
         backgroundColor: "orange",
+        color: "white",
         borderRadius: 10,
         width: '80%',
         zIndex: 1,
