@@ -47,7 +47,7 @@ const ButtonSave: React.FC<ButtonProps> = ({ onPress, userEmail, eventId, eventD
 const styles = StyleSheet.create({
   button: {
     marginTop: 30,
-    backgroundColor: 'orange',
+    backgroundColor: '#5271ff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 4,

@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         height: 80,
         justifyContent: "center",
         alignItems: "center",

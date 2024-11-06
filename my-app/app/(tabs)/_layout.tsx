@@ -20,7 +20,7 @@ function TabLayout() {
       screenOptions={{
         tabBarStyle: {
           height: 60,
-          backgroundColor: 'orange',
+          backgroundColor: '#5271ff',
           borderTopWidth: 0, 
           elevation: 5, 
           shadowColor: '#000', 

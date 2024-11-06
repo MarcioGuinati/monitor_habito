@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         height: 80,
         justifyContent: "center",
         alignItems: "center",
@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
     },
     logo: {
-        marginTop: 300,
-        width: 400,
+        marginTop: 320,
+        width: 300,
         height: 500,
         resizeMode: "contain",
     },
     box: {
-        marginTop: 149,
+        marginTop: 250,
         alignItems: "center",
         backgroundColor: "white",
     },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         marginRight: 70,
         marginTop: 0,
         fontSize: 13,
-        color: "orange",
+        color: "#5271ff",
         fontWeight: "bold",
     },
     linktext1: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     },
     link: {
         fontSize: 16,
-        color: "orange",
+        color: "#5271ff",
         fontWeight: "bold",
     },
 });

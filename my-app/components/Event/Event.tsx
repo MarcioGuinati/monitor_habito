@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     },
     confirmButton: {
         marginRight: 5,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         color: "white",
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         marginLeft: 5,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         color: "white",
         paddingVertical: 10,
         paddingHorizontal: 20,

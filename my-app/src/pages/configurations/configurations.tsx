@@ -4,7 +4,7 @@ export default function ConfigScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Configurações</Text>
+                {/* <Text style={styles.headerText}>Configurações</Text> */}
             </View>
             <View style={styles.content}>
                 <Text style={styles.constructionText}>Esta página está em construção</Text>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         height: 80,
         justifyContent: "center",
         alignItems: "center",

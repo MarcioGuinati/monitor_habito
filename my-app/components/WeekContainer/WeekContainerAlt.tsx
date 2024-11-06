@@ -132,7 +132,7 @@ export default function WeekContainer({ eventos, onDateSelect  }: WeekContainerP
                 }, {} as { [key: string]: { marked: boolean; dotColor: string } })}
                 onDayPress={onDayPress}
                 theme={{
-                    todayTextColor: 'orange',
+                    todayTextColor: '#5271ff',
                     selectedDayBackgroundColor: 'red',
                     arrowColor: 'white',
                     monthTextColor: 'white',
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     currentDay: {
-        backgroundColor: "orange", // cor para o dia atual
+        backgroundColor: "#5271ff", // cor para o dia atual
         borderRadius: 20,
         padding: 2,
     },
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 20,
         paddingBottom : 10,
-        backgroundColor: "orange",
+        backgroundColor: "#5271ff",
         color: "white",
         borderRadius: 10,
         width: '80%',

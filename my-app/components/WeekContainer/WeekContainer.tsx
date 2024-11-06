@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     currentDay: {
-        backgroundColor: "orange", // cor para o dia atual
+        backgroundColor: "#5271ff", // cor para o dia atual
         borderRadius: 20,
         padding: 2,
     },
