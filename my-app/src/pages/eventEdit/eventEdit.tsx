@@ -56,7 +56,7 @@ export default function EventEdit() {
             if (eventId) {
                 const fetchEvento = async () => {
                     try {
-                        const user = auth.currentUser; // Definindo a variável 'user' com o usuário autenticado
+                        const user = auth.currentUser;
                         if (user && user.email) {
                         const docRef = doc(db, user.email, eventId);
                         const docSnapshot = await getDoc(docRef);
