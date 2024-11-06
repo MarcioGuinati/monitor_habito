@@ -18,6 +18,7 @@ export default function EventEdit() {
     const [eventNotes, setEventNotes] = useState("");
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState(new Date());
+    const userId = auth.currentUser?.email ?? null;
 
     // Log quando selectedDate é atualizado
     useEffect(() => {
@@ -55,7 +56,9 @@ export default function EventEdit() {
             if (eventId) {
                 const fetchEvento = async () => {
                     try {
-                        const docRef = doc(db, "eventos", eventId);
+                        const user = auth.currentUser; // Definindo a variável 'user' com o usuário autenticado
+                        if (user && user.email) {
+                        const docRef = doc(db, user.email, eventId);
                         const docSnapshot = await getDoc(docRef);
                         if (docSnapshot.exists()) {
                             const eventData = docSnapshot.data();
@@ -81,7 +84,7 @@ export default function EventEdit() {
                             } else {
                                 setSelectedTime(null);}
                         } else {
-                            console.log(`Evento com ID ${eventId} não encontrado.`);}
+                            console.log(`Evento com ID ${eventId} não encontrado.`);}}
                     } catch (error) {
                         console.error("Erro ao buscar dados do evento:", error);}};
 
