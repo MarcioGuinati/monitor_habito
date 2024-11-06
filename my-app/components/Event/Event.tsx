@@ -4,7 +4,7 @@ import Trash from "react-native-vector-icons/Fontisto";
 import Edit from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import { db, auth } from "../../src/firebase/config_firebase";
-import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import CheckAll from "../CheckAll/CheckAll";
 import SeeAll from "../SeeAll/SeeAll";
