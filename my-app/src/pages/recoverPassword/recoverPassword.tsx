@@ -1,10 +1,11 @@
-import InputNewPassword from "@/components/InputNewPassword/InputNewPassword";
-import InputRepeatNewPassword from "@/components/InputRepeatNewPassword/InputRepeatNewPassword";
-import { Link } from "expo-router";
-import { Image, StyleSheet, Platform, View, Text } from "react-native";
-import ButtonSave from "@/components/ButtonSave/ButtonSave";
+import InputEmail from "@/components/InputEmail/InputEmail";
+import ButtonRecoverPassword from "@/components/ButtonRecoverPassword/ButtonRecoverPassword";
+import { Image, StyleSheet, View } from "react-native";
+import { useState } from "react";
 
 export default function RecoverPassword() {
+    const [userEmail, setUserEmail] = useState("");
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -16,13 +17,11 @@ export default function RecoverPassword() {
             </View>
             <View style={styles.box}>
                 <View style={styles.stepContainer}>
-                    <InputNewPassword />
+                    <InputEmail value={userEmail} onChangeText={setUserEmail} />
                 </View>
-                <View style={styles.stepContainer}>
-                    <InputRepeatNewPassword />
-                </View>
+    
                 <View style={styles.stepButtonContainer}>
-                    <ButtonSave />
+                    <ButtonRecoverPassword userEmail={userEmail} />
                 </View>
             </View>
         </View>
